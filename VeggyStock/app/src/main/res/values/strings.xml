@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">VeggyStock</string>
+    <color name="green">#ace7ba</color>
+    <string name="name">Name:</string>
+    <string name="provider">Provider:</string>
+    <string name="price">Price:</string>
+    <string name="address">Address:</string>
+    <string name="save_item">Save Item</string>
+    <string name="theme">Choose a theme</string>
+    <string name="productimage">Product Image</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="podcast">Podcast</string>
+    <string name="Youtube">Youtube</string>
+    <string name="play">Play</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hecho_por">Hecho Por Miguel Reid Ruiz</string>
+    <string name="dam">De 2 de DAM</string>
+    <string name="parte">Parte muy inicial del proyecto final</string>
+    <string name="saludos">Saludos!</string>
+    <string name="camera">Camera</string>
+</resources>
