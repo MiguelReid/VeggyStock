@@ -35,39 +35,44 @@ class Items : AppCompatActivity() {
         recycler()
         search()
         swipe()
+        menu()
     }
 
-    private val callback = object : ActionMode.Callback {
+    private fun menu() {
+        val callback = object : ActionMode.Callback {
 
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            menuInflater.inflate(R.menu.action_bar, menu)
-            return true
-        }
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                menuInflater.inflate(R.menu.action_bar, menu)
+                return true
+            }
 
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            return false
-        }
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return false
+            }
 
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            return when (item?.itemId) {
-                R.id.share -> {
-                    share()
-                    true
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                return when (item?.itemId) {
+                    R.id.share -> {
+                        share()
+                        true
+                    }
+                    R.id.delete -> {
+                        delete()
+                        true
+                    }
+                    R.id.more -> {
+                        more()
+                        true
+                    }
+                    else -> false
                 }
-                R.id.delete -> {
-                    delete()
-                    true
-                }
-                R.id.more -> {
-                    more()
-                    true
-                }
-                else -> false
+            }
+
+            override fun onDestroyActionMode(mode: ActionMode?) {
             }
         }
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-        }
+        val actionMode = startSupportActionMode(callback)
+        actionMode?.title = "1 selected"
     }
 
     private fun delete() {
@@ -81,9 +86,6 @@ class Items : AppCompatActivity() {
     private fun share() {
 
     }
-
-    val actionMode = startSupportActionMode(callback)
-    //actionMode.title = "1 selected"
 
     private fun swipe() {
         val touchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
