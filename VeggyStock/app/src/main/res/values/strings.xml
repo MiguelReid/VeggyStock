@@ -22,4 +22,10 @@
     <string name="parte">Parte muy inicial del proyecto final</string>
     <string name="saludos">Saludos!</string>
     <string name="camera">Camera</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="more">More</string>
+    <string name="content_description_share">Share option</string>
+    <string name="content_description_delete">Delete option</string>
+    <string name="content_description_more">More option</string>
 </resources>

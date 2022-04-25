@@ -99,7 +99,6 @@ class NewItem : AppCompatActivity() {
     }
 
     private fun saveItem() {
-
         val name = binding.inputName?.editText?.text.toString()
         val provider = binding.inputProvider?.editText?.text.toString()
         val aux = binding.inputPrice?.editText?.text.toString()
@@ -107,7 +106,6 @@ class NewItem : AppCompatActivity() {
         val rating = binding.ratingBar.rating
         val address = binding.inputStreet?.editText?.text.toString()
         val fileName = "$name $provider $address"
-
         initDB()
         uploadImage()
         reference.child(fileName)
@@ -115,7 +113,6 @@ class NewItem : AppCompatActivity() {
             }.addOnFailureListener {
                 Toast.makeText(this, "Item Not Saved", Toast.LENGTH_SHORT).show()
             }
-
     }
 
     @Deprecated("Deprecated in Java")

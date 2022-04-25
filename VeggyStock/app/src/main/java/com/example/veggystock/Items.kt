@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +36,54 @@ class Items : AppCompatActivity() {
         search()
         swipe()
     }
+
+    private val callback = object : ActionMode.Callback {
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.action_bar, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return false
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.share -> {
+                    share()
+                    true
+                }
+                R.id.delete -> {
+                    delete()
+                    true
+                }
+                R.id.more -> {
+                    more()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+        }
+    }
+
+    private fun delete() {
+
+    }
+
+    private fun more() {
+
+    }
+
+    private fun share() {
+
+    }
+
+    val actionMode = startSupportActionMode(callback)
+    //actionMode.title = "1 selected"
 
     private fun swipe() {
         val touchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
