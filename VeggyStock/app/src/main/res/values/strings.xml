@@ -28,4 +28,9 @@
     <string name="content_description_share">Share option</string>
     <string name="content_description_delete">Delete option</string>
     <string name="content_description_more">More option</string>
+    <string name="page_title">Items</string>
+    <string name="favorite">Favorite</string>
+    <string name="content_description_favorite">Favorite item</string>
+    <string name="search">Search</string>
+    <string name="content_description_search">Search an item</string>
 </resources>

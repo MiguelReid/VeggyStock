@@ -35,14 +35,39 @@ class Items : AppCompatActivity() {
         recycler()
         search()
         swipe()
-        menu()
+        //menu()
+        topBar()
+    }
+
+    private fun topBar() {
+        topAppBar.setNavigationOnClickListener {
+            // Handle navigation icon press
+        }
+
+        topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.favorite -> {
+                    // Handle favorite icon press
+                    true
+                }
+                R.id.search -> {
+                    // Handle search icon press
+                    true
+                }
+                R.id.more -> {
+                    // Handle more item (inside overflow menu) press
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun menu() {
         val callback = object : ActionMode.Callback {
 
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                menuInflater.inflate(R.menu.action_bar, menu)
+                menuInflater.inflate(R.menu.contextual_action_bar, menu)
                 return true
             }
 

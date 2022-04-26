@@ -6,10 +6,10 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.RecyclerView
+import com.example.veggystock.Items
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
@@ -26,6 +26,8 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     }
 
     lateinit var context: Context
+    var onItemLongClick: ((Body) -> Unit)?= null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataHolder {
         context = parent.context
@@ -65,6 +67,22 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${element.address}"))
             context.startActivity(searchAddress)
         }
+        holder.binding.btnItem.setOnLongClickListener {
+
+            return@setOnLongClickListener true
+        }
+    }
+
+    private fun delete() {
+
+    }
+
+    private fun more() {
+
+    }
+
+    private fun share() {
+
     }
 
     override fun getItemCount(): Int {
