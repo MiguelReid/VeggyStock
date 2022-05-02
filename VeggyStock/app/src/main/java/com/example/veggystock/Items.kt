@@ -36,31 +36,6 @@ class Items : AppCompatActivity() {
         search()
         swipe()
         //menu()
-        topBar()
-    }
-
-    private fun topBar() {
-        topAppBar.setNavigationOnClickListener {
-            // Handle navigation icon press
-        }
-
-        topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.favorite -> {
-                    // Handle favorite icon press
-                    true
-                }
-                R.id.search -> {
-                    // Handle search icon press
-                    true
-                }
-                R.id.more -> {
-                    // Handle more item (inside overflow menu) press
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     private fun menu() {
