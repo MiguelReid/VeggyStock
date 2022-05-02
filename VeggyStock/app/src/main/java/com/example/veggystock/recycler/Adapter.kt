@@ -21,7 +21,7 @@ private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
-    class DataHolder(v: View) : RecyclerView.ViewHolder(v) {
+    class DataHolder(v: View) : RecyclerView.ViewHolder(v){
         val binding = ActivityItemBinding.bind(v)
     }
 

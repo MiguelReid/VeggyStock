@@ -29,6 +29,7 @@ class Items : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initDB()
@@ -39,44 +40,26 @@ class Items : AppCompatActivity() {
     }
 
     private fun menu() {
-        val callback = object : ActionMode.Callback {
+        binding.topAppBar?.setNavigationOnClickListener {
+            // Handle navigation icon press
+        }
 
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                menuInflater.inflate(R.menu.contextual_action_bar, menu)
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                return when (item?.itemId) {
-                    R.id.share -> {
-                        share()
-                        true
-                    }
-                    R.id.delete -> {
-                        delete()
-                        Toast.makeText(this@Items, "TEST!!!", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.more -> {
-                        more()
-                        true
-                    }
-                    else -> false
+        binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.favorite -> {
+                    favorite()
+                    true
                 }
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
+                R.id.more -> {
+                    more()
+                    true
+                }
+                else -> false
             }
         }
-        val actionMode = startSupportActionMode(callback)
-        actionMode?.title = "1 selected"
     }
 
-    private fun delete() {
+    private fun favorite() {
 
     }
 
@@ -84,9 +67,6 @@ class Items : AppCompatActivity() {
 
     }
 
-    private fun share() {
-
-    }
 
     private fun swipe() {
         val touchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
