@@ -35,7 +35,7 @@ class Items : AppCompatActivity() {
         recycler()
         search()
         swipe()
-        //menu()
+        menu()
     }
 
     private fun menu() {
@@ -58,6 +58,7 @@ class Items : AppCompatActivity() {
                     }
                     R.id.delete -> {
                         delete()
+                        Toast.makeText(this@Items, "TEST!!!", Toast.LENGTH_SHORT).show()
                         true
                     }
                     R.id.more -> {
