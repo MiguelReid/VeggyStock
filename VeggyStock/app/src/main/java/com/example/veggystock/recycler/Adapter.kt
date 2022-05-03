@@ -16,6 +16,7 @@ import com.example.veggystock.modelDB.Body
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
+import kotlinx.android.synthetic.main.activity_item.imgHeart
 
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
@@ -41,6 +42,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         holder.binding.tvPrice.text = element.price.toString()
         holder.binding.tvAddress.text = element.address
         holder.binding.ratingBar.rating = element.rating
+
+        var favorite = false
+        holder.binding.imgHeart?.setOnClickListener {
+            favorite = favorite(R.raw.heartLottie, favorite)
+        }
 
         val name = element.name
         val provider = element.provider
@@ -69,6 +75,17 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
             return@setOnLongClickListener true
         }
+    }
+    //val image = findViewById<com.airbnb.lottie.LottieAnimationView>(R.id.imgHeart)
+
+    private fun favorite(animation: Int, like: Boolean): Boolean {
+        if (!like) {
+            imgHeart.setAnimation(animation)
+            imgHeart.playAnimation()
+        } else {
+            image.setImageResource(R.drawable.heartTrue)
+        }
+        return !like
     }
 
     override fun getItemCount(): Int {
