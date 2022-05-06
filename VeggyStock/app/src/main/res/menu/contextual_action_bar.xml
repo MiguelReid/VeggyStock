@@ -13,4 +13,9 @@
         android:contentDescription="@string/content_description_more"
         android:title="@string/more"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/item_new"
+        android:contentDescription="@string/content_description_newItem"
+        android:title="@string/newItem"
+        app:showAsAction="never" />
 </menu>

@@ -16,13 +16,14 @@ import com.example.veggystock.modelDB.Body
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
-import kotlinx.android.synthetic.main.activity_item.imgHeart
 
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
+var favorite = false
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
-    class DataHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    class DataHolder(v: View) : RecyclerView.ViewHolder(v) {
         val binding = ActivityItemBinding.bind(v)
     }
 
@@ -36,17 +37,13 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     }
 
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
+        initDB()
         val element = list[position]
         holder.binding.tvName.text = element.name
         holder.binding.tvProvider.text = element.provider
         holder.binding.tvPrice.text = element.price.toString()
         holder.binding.tvAddress.text = element.address
         holder.binding.ratingBar.rating = element.rating
-
-        var favorite = false
-        holder.binding.imgHeart?.setOnClickListener {
-            favorite = favorite(R.raw.heartLottie, favorite)
-        }
 
         val name = element.name
         val provider = element.provider
@@ -75,17 +72,28 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
             return@setOnLongClickListener true
         }
-    }
-    //val image = findViewById<com.airbnb.lottie.LottieAnimationView>(R.id.imgHeart)
 
-    private fun favorite(animation: Int, like: Boolean): Boolean {
-        if (!like) {
-            imgHeart.setAnimation(animation)
-            imgHeart.playAnimation()
-        } else {
-            image.setImageResource(R.drawable.heartTrue)
+        holder.binding.imgHeart?.setOnClickListener {
+
+            val regex = Regex("[^A-Za-z0-9]")
+
+            reference =
+                FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
+                    .getReference("Users").child(regex.replace(email.toString(), ""))
+
+            favorite = if (!favorite) {
+                val animation = R.raw.heartlottie
+                holder.binding.imgHeart.setAnimation(animation)
+                holder.binding.imgHeart.playAnimation()
+                holder.binding.imgHeart.setImageResource(R.drawable.hearttrue)
+                reference.child("myDb").child("awais@gmailcom").child("leftSpace")
+                    .setValue("YourDateHere")
+                true
+            } else {
+                holder.binding.imgHeart.setImageResource(R.drawable.heartfalse)
+                false
+            }
         }
-        return !like
     }
 
     override fun getItemCount(): Int {

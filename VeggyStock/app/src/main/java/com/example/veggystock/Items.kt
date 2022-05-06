@@ -1,14 +1,13 @@
 package com.example.veggystock
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.util.Log
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,6 +53,10 @@ class Items : AppCompatActivity() {
                     more()
                     true
                 }
+                R.id.item_new -> {
+                    newItem()
+                    true
+                }
                 else -> false
             }
         }
@@ -66,7 +69,6 @@ class Items : AppCompatActivity() {
     private fun more() {
 
     }
-
 
     private fun swipe() {
         val touchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -145,9 +147,13 @@ class Items : AppCompatActivity() {
     }
 
     private fun fillAll() {
+        val intent = intent
+        val email = intent.getStringExtra("EMAIL")
+        val regex = Regex("[^A-Za-z0-9]")
+        //Firebase Realtime Database doesn't accept special characters
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("items")
+                .getReference("Users").child(regex.replace(email.toString(), ""))
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 clear()
@@ -167,6 +173,7 @@ class Items : AppCompatActivity() {
         })
     }
 
+    /*
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         return super.onCreateOptionsMenu(menu)
@@ -189,9 +196,15 @@ class Items : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+    */
 
     private fun newItem() {
-        val i = Intent(this, NewItem::class.java)
+        val intent = intent
+        val email = intent.getStringExtra("EMAIL")
+        val i = Intent(this, NewItem::class.java).apply {
+            putExtra("EMAIL", email)
+        }
         startActivity(i)
+        Log.d(TAG, "IS ACTIVITY STARTING??")
     }
 }

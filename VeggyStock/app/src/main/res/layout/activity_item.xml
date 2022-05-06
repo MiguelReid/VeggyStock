@@ -20,7 +20,9 @@
             android:layout_height="166dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/roundcorner"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck"
@@ -28,8 +30,8 @@
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="212dp"
+            android:layout_height="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="25dp"
             android:fontFamily="@font/colus"
@@ -40,8 +42,8 @@
 
         <TextView
             android:id="@+id/tv_provider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="210dp"
+            android:layout_height="20dp"
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="Mercadona"
@@ -52,7 +54,7 @@
         <RatingBar
             android:id="@+id/ratingBar"
             style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="82dp"
+            android:layout_width="78dp"
             android:layout_height="21dp"
             android:layout_marginTop="12dp"
             android:numStars="5"
@@ -82,15 +84,16 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/imgHeart"
-            android:layout_width="52dp"
-            android:layout_height="37dp"
-            android:layout_marginStart="340dp"
-            android:layout_marginBottom="12dp"
+            android:layout_width="34dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="264dp"
+            android:layout_marginBottom="80dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_weight="1"
-            tools:srcCompat="@drawable/heartFalse" />
+            app:lottie_enableMergePathsForKitKatAndAbove="true"
+            tools:srcCompat="@drawable/heartfalse" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

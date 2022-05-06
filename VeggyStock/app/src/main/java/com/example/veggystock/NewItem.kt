@@ -109,7 +109,7 @@ class NewItem : AppCompatActivity() {
         initDB()
         uploadImage()
         reference.child(fileName)
-            .setValue(Body(name, provider, price, address, rating)).addOnSuccessListener {
+            .setValue(Body(name, provider, price, address, rating, false)).addOnSuccessListener {
             }.addOnFailureListener {
                 Toast.makeText(this, "Item Not Saved", Toast.LENGTH_SHORT).show()
             }
@@ -167,8 +167,11 @@ class NewItem : AppCompatActivity() {
 
 
     private fun initDB() {
+        val intent = intent
+        val email = intent.getStringExtra("EMAIL")
         db =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-        reference = db.getReference("items")
+        val regex = Regex("[^A-Za-z0-9]")
+        reference = db.getReference("Users").child(regex.replace(email.toString(),""))
     }
 }

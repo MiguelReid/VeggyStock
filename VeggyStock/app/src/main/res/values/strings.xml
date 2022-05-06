@@ -33,4 +33,6 @@
     <string name="content_description_favorite">Favorite item</string>
     <string name="search">Search</string>
     <string name="content_description_search">Search an item</string>
+    <string name="content_description_newItem">New Item</string>
+    <string name="newItem">New Item</string>
 </resources>
