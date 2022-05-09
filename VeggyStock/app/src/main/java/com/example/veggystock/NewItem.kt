@@ -171,7 +171,6 @@ class NewItem : AppCompatActivity() {
         val email = intent.getStringExtra("EMAIL")
         db =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-        val regex = Regex("[^A-Za-z0-9]")
-        reference = db.getReference("Users").child(regex.replace(email.toString(),""))
+        reference = db.getReference("Users").child(email.toString())
     }
 }

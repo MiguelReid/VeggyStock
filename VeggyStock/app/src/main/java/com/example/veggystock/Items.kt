@@ -1,10 +1,8 @@
 package com.example.veggystock
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +34,17 @@ class Items : AppCompatActivity() {
         search()
         swipe()
         menu()
+        getData()
+    }
+
+    fun getData(): HashMap<String, String> {
+        // For sending information to the adapter
+        val intent = intent
+        val email = intent.getStringExtra("EMAIL")
+        val map = HashMap<String, String>()
+        val regex = Regex("[^A-Za-z0-9]")
+        map["EMAIL"] = regex.replace(email.toString(), "")
+        return map
     }
 
     private fun menu() {
@@ -199,12 +208,12 @@ class Items : AppCompatActivity() {
     */
 
     private fun newItem() {
+        val regex = Regex("[^A-Za-z0-9]")
         val intent = intent
         val email = intent.getStringExtra("EMAIL")
         val i = Intent(this, NewItem::class.java).apply {
-            putExtra("EMAIL", email)
+            putExtra("EMAIL", regex.replace(email.toString(), ""))
         }
         startActivity(i)
-        Log.d(TAG, "IS ACTIVITY STARTING??")
     }
 }

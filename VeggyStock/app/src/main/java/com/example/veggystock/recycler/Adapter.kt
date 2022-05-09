@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.veggystock.Items
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
@@ -74,23 +75,25 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         }
 
         holder.binding.imgHeart?.setOnClickListener {
-
-            val regex = Regex("[^A-Za-z0-9]")
+            val activity: Items = holder.itemView.context as Items
+            val map = activity.getData()
+            val email = map["EMAIL"]
 
             reference =
                 FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-                    .getReference("Users").child(regex.replace(email.toString(), ""))
+                    .getReference("Users").child(email.toString()).child(imageName)
+                    .child("favorite")
 
             favorite = if (!favorite) {
                 val animation = R.raw.heartlottie
                 holder.binding.imgHeart.setAnimation(animation)
                 holder.binding.imgHeart.playAnimation()
                 holder.binding.imgHeart.setImageResource(R.drawable.hearttrue)
-                reference.child("myDb").child("awais@gmailcom").child("leftSpace")
-                    .setValue("YourDateHere")
+                reference.setValue(true)
                 true
             } else {
                 holder.binding.imgHeart.setImageResource(R.drawable.heartfalse)
+                reference.setValue(false)
                 false
             }
         }
