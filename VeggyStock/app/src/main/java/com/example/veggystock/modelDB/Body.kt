@@ -8,7 +8,7 @@ class Body {
         price = prc
         address = adrs
         rating = rtng
-        favorite = fav
+        favourite = fav
     }
 
     var name: String = ""
@@ -16,5 +16,5 @@ class Body {
     var price = 0.0f
     var address = ""
     var rating = 0.0f
-    var favorite = false
+    var favourite = false
 }

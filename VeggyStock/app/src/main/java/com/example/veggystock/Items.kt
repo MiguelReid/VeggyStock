@@ -54,8 +54,8 @@ class Items : AppCompatActivity() {
 
         binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.favorite -> {
-                    favorite()
+                R.id.favourite -> {
+                    orderFavourite()
                     true
                 }
                 R.id.more -> {
@@ -71,7 +71,7 @@ class Items : AppCompatActivity() {
         }
     }
 
-    private fun favorite() {
+    private fun orderFavourite() {
 
     }
 

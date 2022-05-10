@@ -20,7 +20,7 @@ import java.io.File
 
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
-var favorite = false
+var favourite = false
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
 
@@ -82,9 +82,9 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
             reference =
                 FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                     .getReference("Users").child(email.toString()).child(imageName)
-                    .child("favorite")
+                    .child("favourite")
 
-            favorite = if (!favorite) {
+            favourite = if (!favourite) {
                 val animation = R.raw.heartlottie
                 holder.binding.imgHeart.setAnimation(animation)
                 holder.binding.imgHeart.playAnimation()

@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VeggyStock">
         <activity
+            android:name=".Favourite"
+            android:exported="false" />
+        <activity
             android:name=".Room"
             android:exported="false" />
         <activity
