@@ -9,9 +9,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/more"
-        android:contentDescription="@string/content_description_more"
-        android:title="@string/more"
+        android:id="@+id/orderBy"
+        android:contentDescription="@string/content_description_orderBy"
+        android:title="@string/orderBy"
         app:showAsAction="never" />
     <item
         android:id="@+id/item_new"

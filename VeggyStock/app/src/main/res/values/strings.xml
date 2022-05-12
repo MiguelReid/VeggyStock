@@ -35,4 +35,6 @@
     <string name="content_description_search">Search an item</string>
     <string name="content_description_newItem">New Item</string>
     <string name="newItem">New Item</string>
+    <string name="content_description_orderBy">Order By</string>
+    <string name="orderBy">Order By</string>
 </resources>

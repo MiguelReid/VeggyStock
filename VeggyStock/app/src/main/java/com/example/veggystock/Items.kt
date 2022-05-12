@@ -58,7 +58,7 @@ class Items : AppCompatActivity() {
                     orderFavourite()
                     true
                 }
-                R.id.more -> {
+                R.id.orderBy -> {
                     more()
                     true
                 }
