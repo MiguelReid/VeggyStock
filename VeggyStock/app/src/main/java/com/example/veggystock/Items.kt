@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.databinding.ActivityAllItemsBinding
 import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
+import com.example.veggystock.recycler.favouriteList
 import com.google.firebase.database.*
 import java.util.*
 
@@ -23,6 +24,8 @@ class Items : AppCompatActivity() {
     val arrayList = ArrayList<Body>()
     private lateinit var reference: DatabaseReference
     private lateinit var db: FirebaseDatabase
+    private val regex = Regex("[^A-Za-z0-9]")
+    private var flag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
@@ -42,7 +45,6 @@ class Items : AppCompatActivity() {
         val intent = intent
         val email = intent.getStringExtra("EMAIL")
         val map = HashMap<String, String>()
-        val regex = Regex("[^A-Za-z0-9]")
         map["EMAIL"] = regex.replace(email.toString(), "")
         return map
     }
@@ -55,11 +57,12 @@ class Items : AppCompatActivity() {
         binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.favourite -> {
+
                     orderFavourite()
                     true
                 }
                 R.id.orderBy -> {
-                    more()
+                    orderByMenu()
                     true
                 }
                 R.id.item_new -> {
@@ -72,10 +75,42 @@ class Items : AppCompatActivity() {
     }
 
     private fun orderFavourite() {
-
+        flag = if (!flag) {
+            fillFavourites()
+            true
+        } else {
+            fillAll()
+            false
+        }
     }
 
-    private fun more() {
+    private fun fillFavourites() {
+        list.clear()
+        val intent = intent
+        val email = intent.getStringExtra("EMAIL")
+
+        reference =
+            FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("Users").child(regex.replace(email.toString(), ""))
+
+        reference.orderByChild("favourite").equalTo(true)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (itemSnapshot in snapshot.children) {
+                            val item = itemSnapshot.getValue(Body::class.java)
+                            list.add(item!!)
+                        }
+                    }
+                    adapter = Adapter(list)
+                    binding.recycler.adapter = adapter
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun orderByMenu() {
 
     }
 
@@ -158,7 +193,6 @@ class Items : AppCompatActivity() {
     private fun fillAll() {
         val intent = intent
         val email = intent.getStringExtra("EMAIL")
-        val regex = Regex("[^A-Za-z0-9]")
         //Firebase Realtime Database doesn't accept special characters
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -182,33 +216,7 @@ class Items : AppCompatActivity() {
         })
     }
 
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.options, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.item_new -> {
-                newItem()
-            }
-            R.id.item_media -> {
-                startActivity(Intent(this, Media::class.java))
-            }
-            R.id.item_fragment -> {
-                startActivity(Intent(this, FragmentManager::class.java))
-            }
-            R.id.item_room -> {
-                startActivity(Intent(this, Room::class.java))
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-    */
-
     private fun newItem() {
-        val regex = Regex("[^A-Za-z0-9]")
         val intent = intent
         val email = intent.getStringExtra("EMAIL")
         val i = Intent(this, NewItem::class.java).apply {

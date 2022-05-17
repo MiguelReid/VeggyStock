@@ -21,6 +21,7 @@ import java.io.File
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 var favourite = false
+val favouriteList: MutableList<Body> = ArrayList()
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
 
@@ -69,10 +70,12 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${element.address}"))
             context.startActivity(searchAddress)
         }
+        /*
         holder.binding.btnItem.setOnLongClickListener {
 
             return@setOnLongClickListener true
         }
+         */
 
         holder.binding.imgHeart?.setOnClickListener {
             val activity: Items = holder.itemView.context as Items
@@ -126,6 +129,5 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     private fun initDB() {
         db =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-        reference = db.getReference("items")
     }
 }
