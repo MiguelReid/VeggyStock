@@ -18,6 +18,7 @@
             app:title="@string/page_title"
             app:menu="@menu/contextual_action_bar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            app:layout_scrollFlags="scroll|enterAlways"
             />
 
     </com.google.android.material.appbar.AppBarLayout>

@@ -99,6 +99,8 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 reference.setValue(false)
                 false
             }
+
+
         }
     }
 

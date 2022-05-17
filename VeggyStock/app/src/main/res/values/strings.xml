@@ -37,4 +37,6 @@
     <string name="newItem">New Item</string>
     <string name="content_description_orderBy">Order By</string>
     <string name="orderBy">Order By</string>
+    <string name="content_description_scan">Scan Item</string>
+    <string name="scan">"Scan "</string>
 </resources>

@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -41,7 +43,33 @@ class NewItem : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         listener()
+        menu()
         binding.imageButton.setImageResource(R.drawable.nophoto)
+    }
+
+    private fun menu() {
+        binding.topBarNewItem?.setNavigationOnClickListener {
+            // Handle navigation icon press
+        }
+
+        binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.scan -> {
+                    barcode()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun barcode() {
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(
+                Barcode.FORMAT_QR_CODE,
+                Barcode.FORMAT_AZTEC
+            )
+            .build()
     }
 
     private fun listener() {
