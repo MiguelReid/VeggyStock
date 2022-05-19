@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,6 +17,9 @@ import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.modelDB.Body
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -66,10 +70,12 @@ class NewItem : AppCompatActivity() {
     private fun barcode() {
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(
-                Barcode.FORMAT_QR_CODE,
-                Barcode.FORMAT_AZTEC
+                Barcode.FORMAT_CODABAR,
+                Barcode.FORMAT_UPC_A,
+                Barcode.FORMAT_UPC_E
             )
             .build()
+        requestPermission()
     }
 
     private fun listener() {
@@ -143,13 +149,57 @@ class NewItem : AppCompatActivity() {
             }
     }
 
-    @Deprecated("Deprecated in Java")
+    private fun scanBarcodes(bitmap: Bitmap) {
+        val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+            .setBarcodeFormats(
+                Barcode.FORMAT_CODABAR,
+                Barcode.FORMAT_UPC_A,
+                Barcode.FORMAT_UPC_E
+            )
+            .build()
+
+        val detector = FirebaseVision.getInstance()
+            .getVisionBarcodeDetector(options)
+
+        val image = FirebaseVisionImage.fromBitmap(bitmap)
+
+        val result = detector.detectInImage(image)
+            .addOnSuccessListener { barcodes ->
+                Log.d("TASK SUCCESFUL ->>>>>>", "YEEHAW")
+                for (barcode in barcodes) {
+                    val bounds = barcode.boundingBox
+                    val corners = barcode.cornerPoints
+
+                    val rawValue = barcode.rawValue
+
+                    // See API reference for complete list of supported types
+                    when (barcode.valueType) {
+                        Barcode.TYPE_WIFI -> {
+                            val ssid = barcode.wifi!!.ssid
+                            val password = barcode.wifi!!.password
+                            val type = barcode.wifi!!.encryptionType
+                        }
+                        Barcode.TYPE_URL -> {
+                            val title = barcode.url!!.title
+                            val url = barcode.url!!.url
+                        }
+                    }
+                    Log.d("Barcode ->>", barcode.toString())
+                }
+            }
+            .addOnFailureListener {
+                Log.d("PROBLEM ->>>>>>", "OOPSIE")
+            }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 100 && resultCode == RESULT_OK) {
             imageUri = data?.data!!
-            Picasso.get()!!.load(imageUri).resize(300, 300).centerCrop().into(binding.imageButton)
+            if (binding.switchCamera?.isChecked == true)
+                Picasso.get()!!.load(imageUri).resize(300, 300).centerCrop()
+                    .into(binding.imageButton)
         }
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
@@ -165,7 +215,11 @@ class NewItem : AppCompatActivity() {
             fileOS.write(data2)
             fileOS.flush()
             fileOS.close()
-            binding.imageButton.setImageBitmap(imageBitmap)
+            if (binding.switchCamera?.isChecked == true) {
+                binding.imageButton.setImageBitmap(imageBitmap)
+            } else {
+                scanBarcodes(imageBitmap)
+            }
         }
     }
 
