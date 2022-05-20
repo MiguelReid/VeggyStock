@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +51,44 @@ class NewItem : AppCompatActivity() {
         listener()
         menu()
         binding.imageButton.setImageResource(R.drawable.nophoto)
+        check()
     }
+
+    private fun check() {
+        binding.btnSave.isEnabled = false
+        val editTexts = listOf(
+            binding.inputName?.editText,
+            binding.inputProvider?.editText,
+            binding.inputPrice?.editText,
+            binding.inputStreet?.editText
+        )
+        for (editText in editTexts) {
+            editText?.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    val et1 = binding.inputName?.editText?.text.toString().trim()
+                    val et2 = binding.inputProvider?.editText?.text.toString().trim()
+                    val et3 = binding.inputPrice?.editText?.text.toString().trim()
+                    val et4 = binding.inputStreet?.editText?.text.toString().trim()
+
+                    binding.btnSave.isEnabled = et1.isNotEmpty()
+                            && et2.isNotEmpty()
+                            && et3.isNotEmpty()
+                            && et4.isNotEmpty()
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun afterTextChanged(
+                    s: Editable
+                ) {
+                }
+            })
+        }
+    }
+
 
     private fun menu() {
         binding.topBarNewItem?.setNavigationOnClickListener {
