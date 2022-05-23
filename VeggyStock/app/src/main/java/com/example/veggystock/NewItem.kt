@@ -19,13 +19,12 @@ import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.modelDB.Body
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -89,7 +88,6 @@ class NewItem : AppCompatActivity() {
         }
     }
 
-
     private fun menu() {
         binding.topBarNewItem?.setNavigationOnClickListener {
             // Handle navigation icon press
@@ -98,23 +96,12 @@ class NewItem : AppCompatActivity() {
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.scan -> {
-                    barcode()
+                    requestPermission()
                     true
                 }
                 else -> false
             }
         }
-    }
-
-    private fun barcode() {
-        val options = BarcodeScannerOptions.Builder()
-            .setBarcodeFormats(
-                Barcode.FORMAT_CODABAR,
-                Barcode.FORMAT_UPC_A,
-                Barcode.FORMAT_UPC_E
-            )
-            .build()
-        requestPermission()
     }
 
     private fun listener() {
@@ -189,7 +176,7 @@ class NewItem : AppCompatActivity() {
     }
 
     private fun scanBarcodes(bitmap: Bitmap) {
-        val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+        val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(
                 Barcode.FORMAT_CODABAR,
                 Barcode.FORMAT_UPC_A,
@@ -197,28 +184,31 @@ class NewItem : AppCompatActivity() {
             )
             .build()
 
-        val detector = FirebaseVision.getInstance()
-            .getVisionBarcodeDetector(options)
+        val scanner = BarcodeScanning.getClient()
+        val image = InputImage.fromBitmap(bitmap, 0)
 
-        val image = FirebaseVisionImage.fromBitmap(bitmap)
-
-        val result = detector.detectInImage(image)
+        scanner.process(image)
             .addOnSuccessListener { barcodes ->
+                Log.d("Success->","yaaay")
                 for (barcode in barcodes) {
                     val bounds = barcode.boundingBox
                     val corners = barcode.cornerPoints
-
                     val rawValue = barcode.rawValue
+                    Log.d("RAWVALUE ->>>", rawValue.toString())
 
                     when (barcode.valueType) {
                         Barcode.FORMAT_UPC_A -> {
                             Log.d("TASK SUCCESFUL ->>>>>>", "UPC A")
+                            val upc = barcode.url
                         }
                         Barcode.FORMAT_UPC_E -> {
                             Log.d("TASK SUCCESFUL ->>>>>>", "UPC E")
                         }
                         Barcode.FORMAT_CODABAR -> {
                             Log.d("TASK SUCCESFUL ->>>>>>", "BARCODE")
+                            val title = barcode.url!!.title
+                            val url = barcode.url!!.url
+
                         }
                     }
                     Log.d("Barcode ->>", barcode.toString())
