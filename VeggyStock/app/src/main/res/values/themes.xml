@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.VeggyStock" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/main_blue</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -25,4 +25,6 @@
         <!-- CHANGE THE DRAWABLE -->
         <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
     </style>
+
+    <color name="main_blue">#2ec4b6</color>
 </resources>

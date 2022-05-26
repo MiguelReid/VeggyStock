@@ -180,23 +180,28 @@ class NewItem : AppCompatActivity() {
             .setBarcodeFormats(
                 Barcode.FORMAT_CODABAR,
                 Barcode.FORMAT_UPC_A,
-                Barcode.FORMAT_UPC_E
+                Barcode.FORMAT_UPC_E,
+                Barcode.FORMAT_QR_CODE,
+                Barcode.FORMAT_EAN_8,
+                Barcode.FORMAT_EAN_13,
+                Barcode.FORMAT_ALL_FORMATS
             )
             .build()
 
-        val scanner = BarcodeScanning.getClient()
+        val scanner = BarcodeScanning.getClient(options)
         val image = InputImage.fromBitmap(bitmap, 0)
 
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
-                Log.d("Success->","yaaay")
+                // This does work
                 for (barcode in barcodes) {
                     val bounds = barcode.boundingBox
                     val corners = barcode.cornerPoints
                     val rawValue = barcode.rawValue
+                    val valueType = barcode.valueType
                     Log.d("RAWVALUE ->>>", rawValue.toString())
 
-                    when (barcode.valueType) {
+                    when (valueType) {
                         Barcode.FORMAT_UPC_A -> {
                             Log.d("TASK SUCCESFUL ->>>>>>", "UPC A")
                             val upc = barcode.url
@@ -208,10 +213,14 @@ class NewItem : AppCompatActivity() {
                             Log.d("TASK SUCCESFUL ->>>>>>", "BARCODE")
                             val title = barcode.url!!.title
                             val url = barcode.url!!.url
-
+                        }
+                        Barcode.FORMAT_QR_CODE -> {
+                            Log.d("TASK SUCCESFUL ->>", "QR CODE")
+                        }
+                        Barcode.TYPE_TEXT -> {
+                            val data = barcode.displayValue
                         }
                     }
-                    Log.d("Barcode ->>", barcode.toString())
                 }
             }
             .addOnFailureListener {

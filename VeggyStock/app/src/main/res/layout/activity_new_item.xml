@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/green"
+    android:background="@color/background_blue"
     tools:context=".NewItem">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -14,13 +14,12 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topBarNewItem"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/newItem"
-            app:menu="@menu/new_item_bar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
             app:layout_scrollFlags="scroll|enterAlways"
-            />
+            app:menu="@menu/new_item_bar"
+            app:title="@string/newItem" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -132,7 +131,7 @@
         android:layout_marginStart="148dp"
         android:layout_marginTop="40dp"
         android:adjustViewBounds="true"
-        android:backgroundTint="#5B9717"
+        android:backgroundTint="@color/main_blue"
         android:scaleType="fitCenter"
         android:text="@string/save_item"
         android:textColor="#F3ECEC"
@@ -145,7 +144,6 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_marginTop="30dp"
-        android:backgroundTint="@color/green"
         android:contentDescription="@string/productimage"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
