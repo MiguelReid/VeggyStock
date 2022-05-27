@@ -90,9 +90,10 @@ dependencies {
     //Lotti
     implementation 'com.airbnb.android:lottie:3.4.2'
 
-    //Picasso y retrofit
+    //Picasso y retrofit + Gson
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Get text from image
     implementation("com.google.android.gms:play-services-vision:20.1.3")
