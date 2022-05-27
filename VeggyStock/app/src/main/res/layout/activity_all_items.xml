@@ -26,18 +26,20 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="406dp"
-        android:layout_height="666dp"
+        android:layout_height="645dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="110dp"
+        android:background="@color/background_blue"
+        android:backgroundTint="@color/background_blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <SearchView
         android:id="@+id/search"
-        android:layout_width="403dp"
-        android:layout_height="55dp"
+        android:layout_width="407dp"
+        android:layout_height="56dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="56dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
