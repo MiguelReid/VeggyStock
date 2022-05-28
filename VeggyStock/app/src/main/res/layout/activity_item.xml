@@ -37,6 +37,7 @@
             android:layout_marginTop="25dp"
             android:fontFamily="@font/colus"
             android:text="Chocolate almendras"
+            android:textColor="#070707"
             app:layout_constraintStart_toEndOf="@+id/btn_item"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,6 +48,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="Mercadona"
+            android:textColor="#070707"
             app:layout_constraintStart_toStartOf="@+id/tv_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
@@ -68,6 +70,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="4$"
+            android:textColor="#070707"
             app:layout_constraintStart_toStartOf="@+id/ratingBar"
             app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
@@ -78,6 +81,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="Calle Turquia"
+            android:textColor="#070707"
             app:layout_constraintStart_toStartOf="@+id/tv_price"
             app:layout_constraintTop_toBottomOf="@+id/tv_price" />
 

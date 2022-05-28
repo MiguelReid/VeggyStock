@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VeggyStock</string>
+    <string name="app_name" translatable="false">VeggyStock</string>
     <color name="green">#ace7ba</color>
     <string name="name">Name:</string>
     <string name="provider">Provider:</string>

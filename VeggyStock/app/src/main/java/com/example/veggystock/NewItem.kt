@@ -1,9 +1,11 @@
 package com.example.veggystock
 
 import android.Manifest
+import android.R
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -26,6 +28,8 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.squareup.picasso.Picasso
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -41,6 +45,7 @@ class NewItem : AppCompatActivity() {
     private lateinit var imageUri: Uri
     private lateinit var imageBitmap: Bitmap
     private lateinit var data2: ByteArray
+    private var urlBase = "https://api.edamam.com/api/food-database/v2/parser?session=40&"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -49,8 +54,16 @@ class NewItem : AppCompatActivity() {
         setContentView(binding.root)
         listener()
         menu()
-        binding.imageButton.setImageResource(R.drawable.nophoto)
+        //binding.imageButton.setImageResource(R.drawable.nophoto)
         check()
+    }
+    //private fun translate(sentence: String): String {}
+
+    private fun getRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(urlBase)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     private fun check() {
@@ -92,7 +105,7 @@ class NewItem : AppCompatActivity() {
         binding.topBarNewItem?.setNavigationOnClickListener {
             // Handle navigation icon press
         }
-
+        /*
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.scan -> {
@@ -102,6 +115,7 @@ class NewItem : AppCompatActivity() {
                 else -> false
             }
         }
+         */
     }
 
     private fun listener() {

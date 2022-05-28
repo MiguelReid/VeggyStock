@@ -106,6 +106,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.0.0'
     implementation 'com.google.mlkit:barcode-scanning:17.0.2'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.1.2'
+
+    // Bottom Bar Menu
+    implementation 'nl.joery.animatedbottombar:library:1.1.0'
 }
 
 kapt {

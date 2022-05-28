@@ -16,7 +16,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.154"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            />
 
         <TextView
             android:id="@+id/textView5"
@@ -24,10 +25,11 @@
             android:layout_height="141dp"
             android:layout_marginStart="42dp"
             android:layout_marginTop="90dp"
-            android:fontFamily="@font/nightydemo"
-            android:text="Welcome \n Back"
+            android:fontFamily="@font/colus"
+            android:text="Welcome \n Back!!"
             android:textColor="#176C64"
-            android:textSize="90sp"
+            android:textSize="50sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
