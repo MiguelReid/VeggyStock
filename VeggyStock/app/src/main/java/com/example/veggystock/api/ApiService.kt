@@ -7,5 +7,5 @@ import retrofit2.http.Url
 interface ApiService {
 
     @GET
-    suspend fun getData(@Url url: String): Response<Gson>
+    suspend fun getDataEdamam(@Url url: String): Response<hitsGson>
 }
