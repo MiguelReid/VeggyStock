@@ -26,5 +26,4 @@
         <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
     </style>
 
-    <color name="main_blue">#2ec4b6</color>
 </resources>

@@ -12,6 +12,7 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background_blue"
         android:paddingBottom="10dp">
 
         <ImageButton
@@ -36,7 +37,6 @@
             android:layout_marginTop="25dp"
             android:fontFamily="@font/colus"
             android:text="Chocolate almendras"
-            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/btn_item"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +47,6 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="Mercadona"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tv_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
@@ -84,8 +83,8 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/imgHeart"
-            android:layout_width="34dp"
-            android:layout_height="22dp"
+            android:layout_width="35dp"
+            android:layout_height="26dp"
             android:layout_marginStart="264dp"
             android:layout_marginBottom="80dp"
             android:visibility="visible"
