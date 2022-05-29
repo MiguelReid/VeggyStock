@@ -1,4 +1,4 @@
-package com.example.veggystock.api
+package com.example.veggystock.foodDatabase
 
 import com.google.gson.annotations.SerializedName
 
@@ -23,4 +23,9 @@ data class NutrientsGson(
     //Carbohydrate, by difference
     @SerializedName("FIBTG") var fiber: Double
     //Fiber, total dietary
+)
+
+data class Gson2(
+    @SerializedName("calories") var calories: Double,
+    @SerializedName("healthLabels") var healthLabels: String
 )
