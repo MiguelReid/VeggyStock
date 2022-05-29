@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.databinding.ActivityAllItemsBinding
 import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
-import com.example.veggystock.recycler.favouriteList
 import com.google.firebase.database.*
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*

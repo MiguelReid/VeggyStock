@@ -21,7 +21,6 @@ import java.io.File
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 var favourite = false
-val favouriteList: MutableList<Body> = ArrayList()
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
 

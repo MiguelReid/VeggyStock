@@ -1,6 +1,7 @@
 package com.example.veggystock
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -58,11 +59,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         ponerListener()
         comprobarSesion()
+        binding.btnGithub.setImageResource(R.drawable.github)
+        binding.btnStack.setImageResource(R.drawable.stack)
     }
 
     private fun ponerListener() {
         binding.btnLogin.setOnClickListener {
             iniciarSesion()
+        }
+        binding.btnGithub.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/MiguelReid"))
+            startActivity(i)
+        }
+        binding.btnStack.setOnClickListener {
+            val i = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://stackoverflow.com/users/14751023/miguel-reid-ruiz")
+            )
+            startActivity(i)
         }
     }
 
