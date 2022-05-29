@@ -13,9 +13,14 @@ data class HintsGson(
 )
 
 data class NutrientsGson(
-    @SerializedName("ENERC_KCAL") var enercKcal: Double,
-    @SerializedName("PROCNT") var procnt: Double,
+    @SerializedName("ENERC_KCAL") var energy: Double,
+    //Energy
+    @SerializedName("PROCNT") var protein: Double,
+    //Protein
     @SerializedName("FAT") var fat: Double,
-    @SerializedName("CHOCDF") var chocdf: Double,
-    @SerializedName("FIBTG") var fibtg: Double
-    )
+    //Total lipid (fat)
+    @SerializedName("CHOCDF") var carbs: Double,
+    //Carbohydrate, by difference
+    @SerializedName("FIBTG") var fiber: Double
+    //Fiber, total dietary
+)

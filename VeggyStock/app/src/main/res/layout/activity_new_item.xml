@@ -150,9 +150,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-        app:srcCompat="@drawable/nophoto"
-        app:tint="#1E8522"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:srcCompat="@drawable/nophoto" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_camera"

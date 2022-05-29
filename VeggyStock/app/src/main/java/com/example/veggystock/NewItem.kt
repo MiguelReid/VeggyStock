@@ -1,7 +1,7 @@
 package com.example.veggystock
 
 import android.Manifest
-import android.R
+import android.R.id
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -54,10 +54,9 @@ class NewItem : AppCompatActivity() {
         setContentView(binding.root)
         listener()
         menu()
-        //binding.imageButton.setImageResource(R.drawable.nophoto)
+        binding.imageButton.setImageResource(R.drawable.nophoto)
         check()
     }
-    //private fun translate(sentence: String): String {}
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
@@ -105,17 +104,17 @@ class NewItem : AppCompatActivity() {
         binding.topBarNewItem?.setNavigationOnClickListener {
             // Handle navigation icon press
         }
-        /*
+
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.scan -> {
+            when (menuItem.itemId){
+                R.id.scan_item->{
                     requestPermission()
                     true
                 }
                 else -> false
             }
         }
-         */
+
     }
 
     private fun listener() {
