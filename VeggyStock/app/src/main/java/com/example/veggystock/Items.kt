@@ -26,13 +26,16 @@ class Items : AppCompatActivity() {
     private lateinit var reference: DatabaseReference
     private lateinit var db: FirebaseDatabase
     private val regex = Regex("[^A-Za-z0-9]")
-    private var flag = false
+    private lateinit var email: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        val intent = intent
+        val emailAux = intent.getStringExtra("EMAIL")
+        email = regex.replace(emailAux.toString(), "")
         initDB()
         recycler()
         search()
@@ -43,10 +46,8 @@ class Items : AppCompatActivity() {
 
     fun getData(): HashMap<String, String> {
         // For sending information to the adapter
-        val intent = intent
-        val email = intent.getStringExtra("EMAIL")
         val map = HashMap<String, String>()
-        map["EMAIL"] = regex.replace(email.toString(), "")
+        map["EMAIL"] = email
         return map
     }
 
@@ -84,24 +85,12 @@ class Items : AppCompatActivity() {
         })
     }
 
-    private fun orderFavourite() {
-        flag = if (!flag) {
-            fillFavourites()
-            true
-        } else {
-            fillAll()
-            false
-        }
-    }
-
     private fun fillFavourites() {
         list.clear()
-        val intent = intent
-        val email = intent.getStringExtra("EMAIL")
 
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("Users").child(regex.replace(email.toString(), ""))
+                .getReference("Users").child(email)
 
         reference.orderByChild("favourite").equalTo(true)
             .addValueEventListener(object : ValueEventListener {
@@ -201,12 +190,9 @@ class Items : AppCompatActivity() {
     }
 
     private fun fillAll() {
-        val intent = intent
-        val email = intent.getStringExtra("EMAIL")
-        //Firebase Realtime Database doesn't accept special characters
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("Users").child(regex.replace(email.toString(), ""))
+                .getReference("Users").child(email)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 clear()
@@ -227,10 +213,8 @@ class Items : AppCompatActivity() {
     }
 
     private fun newItem() {
-        val intent = intent
-        val email = intent.getStringExtra("EMAIL")
         val i = Intent(this, NewItem::class.java).apply {
-            putExtra("EMAIL", regex.replace(email.toString(), ""))
+            putExtra("EMAIL", email)
         }
         startActivity(i)
     }
