@@ -1,11 +1,9 @@
 package com.example.veggystock
 
 import android.Manifest
-import android.R.id
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.veggystock.databinding.ActivityNewItemBinding
+import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.modelDB.Body
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -28,6 +27,9 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
@@ -45,7 +47,9 @@ class NewItem : AppCompatActivity() {
     private lateinit var imageUri: Uri
     private lateinit var imageBitmap: Bitmap
     private lateinit var data2: ByteArray
-    private var urlBase = "https://api.edamam.com/api/food-database/v2/parser?session=40&"
+    private var urlBase = "https://api.edamam.com/api/food-database/v2/"
+    private var appId = "f92aec81"
+    private var appKey = "0efe25b2bec1d420f5f78f7deaa3358c"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -206,14 +210,27 @@ class NewItem : AppCompatActivity() {
 
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
-                // This does work
                 for (barcode in barcodes) {
-                    val bounds = barcode.boundingBox
-                    val corners = barcode.cornerPoints
-                    val rawValue = barcode.rawValue
-                    val valueType = barcode.valueType
-                    Log.d("RAWVALUE ->>>", rawValue.toString())
+                    //val bounds = barcode.boundingBox
+                    //val corners = barcode.cornerPoints
+                    //val valueType = barcode.valueType
+                    val rawValue = barcode.rawValue.toString()
+                    Log.d("RAWVALUE ->>>", rawValue)
 
+                    CoroutineScope(Dispatchers.IO).launch {
+                        //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
+                        val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?session=40&app_id=f92aec81&app_key=0efe25b2bec1d420f5f78f7deaa3358c&ingr=rice&nutrition-type=cooking&health=vegetarian")
+                        val data = apiCall.body()
+                        //&nutrition-type=cooking&health=vegetarian
+                        runOnUiThread {
+                            if(apiCall.isSuccessful) {
+                                Log.d("API DATA ->>", data.toString())
+                            }else{
+                                Log.d("ERROR ->>", "API CALL NOT SUCCESFUL")
+                            }
+                        }
+                    }
+                    /*
                     when (valueType) {
                         Barcode.FORMAT_UPC_A -> {
                             Log.d("TASK SUCCESFUL ->>>>>>", "UPC A")
@@ -234,6 +251,7 @@ class NewItem : AppCompatActivity() {
                             val data = barcode.displayValue
                         }
                     }
+                     */
                 }
             }
             .addOnFailureListener {

@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                             }
                     }
                 } catch (e: ApiException) {
-                    Log.d("Error al validar con Google", e.localizedMessage.toString())
+                    Log.d("Error al validar con Google", e.localizedMessage!!.toString())
                 }
             } else {
                 Toast.makeText(this, "ERROR AL INICIAR", Toast.LENGTH_SHORT).show()
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarError() {
-        val alerta =
+        val alert =
             AlertDialog.Builder(this).setTitle("Error").setMessage("Couldn't Sign In")
                 .setPositiveButton("Aceptar", null)
                 .create().show()
