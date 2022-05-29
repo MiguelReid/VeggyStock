@@ -2,20 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/favourite"
-        android:contentDescription="@string/content_description_favorite"
-        android:icon="@drawable/favorite"
-        android:title="@string/favorite"
+        android:id="@+id/item_new"
+        android:contentDescription="@string/content_description_newItem"
+        android:icon="@drawable/newbutton"
+        android:title="@string/newItem"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/orderBy"
         android:contentDescription="@string/content_description_orderBy"
         android:title="@string/orderBy"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_new"
-        android:contentDescription="@string/content_description_newItem"
-        android:title="@string/newItem"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/sort"
+        />
 </menu>

@@ -44,16 +44,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <nl.joery.animatedbottombar.AnimatedBottomBar
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:abb_selectedTabType="text"
-        app:abb_indicatorLocation="bottom"
+        app:abb_indicatorAppearance="round"
         app:abb_indicatorColor="@color/main_blue"
+        app:abb_indicatorLocation="bottom"
+        app:abb_selectedIndex="0"
+        app:abb_selectedTabType="text"
         app:abb_tabColor="@color/main_blue"
         app:abb_tabColorSelected="@color/main_blue"
-        app:abb_indicatorAppearance="round"
         app:abb_tabs="@menu/bottom_bar"
-        app:abb_selectedIndex="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

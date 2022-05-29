@@ -14,6 +14,7 @@ import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
 import com.example.veggystock.recycler.favouriteList
 import com.google.firebase.database.*
+import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 
 
@@ -56,11 +57,6 @@ class Items : AppCompatActivity() {
 
         binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.favourite -> {
-
-                    orderFavourite()
-                    true
-                }
                 R.id.orderBy -> {
                     orderByMenu()
                     true
@@ -72,6 +68,20 @@ class Items : AppCompatActivity() {
                 else -> false
             }
         }
+
+        binding.bottomBar?.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
+            override fun onTabSelected(
+                lastIndex: Int,
+                lastTab: AnimatedBottomBar.Tab?,
+                newIndex: Int,
+                newTab: AnimatedBottomBar.Tab
+            ) {
+                when(newIndex){
+                    0 -> fillAll()
+                    1 -> fillFavourites()
+                }
+            }
+        })
     }
 
     private fun orderFavourite() {
