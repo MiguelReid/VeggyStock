@@ -41,4 +41,11 @@
     <string name="scan">"Scan "</string>
     <string name="items">Items</string>
     <string name="favourite_items">Favourite Items</string>
+    <string name="close">Close</string>
+    <string name="supporting_text">Do you want to save the item?</string>
+    <string name="save">Save</string>
+    <string name="no">No</string>
+    <string name="marked_favourite">Item marked as favourite</string>
+    <string name="marked_not_favourite">Item not marked as favourite</string>
+    <string name="item_deleted">Item deleted</string>
 </resources>

@@ -14,6 +14,7 @@ import com.example.veggystock.Items
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
@@ -61,7 +62,7 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
             holder.binding.btnItem.setImageBitmap(bitmap)
             //Picasso.get()!!.load(bitmap).resize(138, 166).centerCrop().into(holder.binding.btnItem)
         }.addOnFailureListener {
-            Log.d(TAG, "Failed to retrieve the image")
+            Log.e(TAG, "Failed to retrieve the image")
         }
 
         holder.binding.btnItem.setOnClickListener {
@@ -86,10 +87,14 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 holder.binding.imgHeart.playAnimation()
                 holder.binding.imgHeart.setImageResource(R.drawable.hearttrue)
                 reference.setValue(true)
+                Snackbar.make(holder.itemView, R.string.marked_favourite, Snackbar.LENGTH_SHORT)
+                    .show()
                 true
             } else {
                 holder.binding.imgHeart.setImageResource(R.drawable.heartfalse)
                 reference.setValue(false)
+                Snackbar.make(holder.itemView, R.string.marked_not_favourite, Snackbar.LENGTH_SHORT)
+                    .show()
                 false
             }
         }

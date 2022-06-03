@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.modelDB.Body
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -47,9 +48,12 @@ class NewItem : AppCompatActivity() {
     private lateinit var imageUri: Uri
     private lateinit var imageBitmap: Bitmap
     private lateinit var data2: ByteArray
-    private var urlBase = "https://api.edamam.com/api/food-database/v2/"
-    private var appId = "f92aec81"
-    private var appKey = "0efe25b2bec1d420f5f78f7deaa3358c"
+    private var urlBaseDatabase = "https://api.edamam.com/api/food-database/v2/"
+    private var appIdDatabase = "f92aec81"
+    private var appKeyDatabase = "0efe25b2bec1d420f5f78f7deaa3358c"
+    private var urlBaseNutrition = "https://api.edamam.com/api/"
+    private var appIdNutrition = "d1e4b94c"
+    private var appKeyNutrition = "f461b422fb6f8acec69fe9b7badc15d8"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -62,9 +66,16 @@ class NewItem : AppCompatActivity() {
         check()
     }
 
-    private fun getRetrofit(): Retrofit {
+    private fun getRetrofitDatabase(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(urlBase)
+            .baseUrl(urlBaseDatabase)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    private fun getRetrofitNutrition(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(urlBaseNutrition)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -198,12 +209,9 @@ class NewItem : AppCompatActivity() {
                 Barcode.FORMAT_CODABAR,
                 Barcode.FORMAT_UPC_A,
                 Barcode.FORMAT_UPC_E,
-                Barcode.FORMAT_QR_CODE,
                 Barcode.FORMAT_EAN_8,
-                Barcode.FORMAT_EAN_13,
-                Barcode.FORMAT_ALL_FORMATS
-            )
-            .build()
+                Barcode.FORMAT_EAN_13
+            ).build()
 
         val scanner = BarcodeScanning.getClient(options)
         val image = InputImage.fromBitmap(bitmap, 0)
@@ -211,42 +219,62 @@ class NewItem : AppCompatActivity() {
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
                 for (barcode in barcodes) {
-                    //val bounds = barcode.boundingBox
-                    //val corners = barcode.cornerPoints
-                    //val valueType = barcode.valueType
                     val rawValue = barcode.rawValue.toString()
                     Log.d("RAWVALUE ->>>", rawValue)
 
                     CoroutineScope(Dispatchers.IO).launch {
                         //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
-                        val apiCall = getRetrofit().create(ApiService::class.java)
-                            .foodDatabase("parser?session=40&app_id=f92aec81&app_key=0efe25b2bec1d420f5f78f7deaa3358c&ingr=rice&nutrition-type=cooking&health=vegetarian")
+                        val apiCall = getRetrofitDatabase().create(ApiService::class.java)
+                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=rice&nutrition-type=cooking&health=vegetarian")
                         val data = apiCall.body()
-                        //&nutrition-type=cooking&health=vegetarian
+
+                        val apiCall2 = getRetrofitNutrition().create(ApiService::class.java)
+                            .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${data?.listHints?.first()?.food?.id}")
+                        val data2 = apiCall2.body()
+
                         runOnUiThread {
-                            if (apiCall.isSuccessful) {
-                                Log.d("API DATA ->>", data.toString())
-                            } else {
-                                Log.d("ERROR ->>", "API CALL NOT SUCCESFUL")
+                            if (apiCall.isSuccessful && data != null) {
+                                if (apiCall2.isSuccessful && data2 != null) {
+                                    Log.d("SUCCESS ->>>", "API CALL NUTRITION DATA SUCCESFUL")
+                                    if (data2.healthLabels.contains("VEGAN")) {
+                                        MaterialAlertDialogBuilder(this@NewItem, R.style.alertDialogPositive)
+                                            .setTitle("Save Item?")
+                                            .setMessage("${data.listHints.first().food.label} is vegan")
+                                                //TODO $healthLabel en vez de is vegan por el menu hecho antes
+                                            .setNeutralButton(resources.getString(R.string.no)) { dialog, which ->
+                                                // Respond to negative button press
+                                            }
+                                            .setPositiveButton(resources.getString(R.string.save)) { dialog, which ->
+                                                // Respond to positive button press
+                                            }
+                                            .show()
+                                    } else {
+
+                                    }
+                                } else {
+                                    Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
+                                }
                             }
                         }
                     }
                     /*
                     when (valueType) {
                         Barcode.FORMAT_UPC_A -> {
-                            Log.d("TASK SUCCESFUL ->>>>>>", "UPC A")
+                            Log.i("TASK SUCCESFUL ->>>>>>", "UPC A")
                             val upc = barcode.url
                         }
                         Barcode.FORMAT_UPC_E -> {
-                            Log.d("TASK SUCCESFUL ->>>>>>", "UPC E")
+                            Log.i("TASK SUCCESFUL ->>>>>>", "UPC E")
                         }
                         Barcode.FORMAT_CODABAR -> {
-                            Log.d("TASK SUCCESFUL ->>>>>>", "BARCODE")
+                            Log.i("TASK SUCCESFUL ->>>>>>", "BARCODE")
                             val title = barcode.url!!.title
                             val url = barcode.url!!.url
                         }
                         Barcode.FORMAT_QR_CODE -> {
-                            Log.d("TASK SUCCESFUL ->>", "QR CODE")
+                            Log.i
+
+                          ("TASK SUCCESFUL ->>", "QR CODE")
                         }
                         Barcode.TYPE_TEXT -> {
                             val data = barcode.displayValue
@@ -256,7 +284,7 @@ class NewItem : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                Log.d("PROBLEM ->>>>>>", "OOPSIE")
+                Log.e("PROBLEM ->>>>>>", "BARCODE NOT RECOGNIZED")
             }
     }
 

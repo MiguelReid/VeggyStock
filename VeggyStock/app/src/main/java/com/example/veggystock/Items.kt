@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.databinding.ActivityAllItemsBinding
 import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
@@ -76,7 +77,7 @@ class Items : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
-                when(newIndex){
+                when (newIndex) {
                     0 -> fillAll()
                     1 -> fillFavourites()
                 }
@@ -124,7 +125,9 @@ class Items : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = binding.recycler.adapter as Adapter
-                adapter.removeAt(viewHolder.adapterPosition, email)
+                adapter.removeAt(viewHolder.absoluteAdapterPosition, email)
+                Snackbar.make(binding.recycler, R.string.item_deleted, Snackbar.LENGTH_SHORT)
+                    .show()
             }
         }
         val ith = ItemTouchHelper(touchHelper)

@@ -31,6 +31,5 @@ data class NutrientsGson(
 )
 
 data class Gson2(
-    @SerializedName("calories") var calories: Double,
-    @SerializedName("healthLabels") var healthLabels: String
+    @SerializedName("healthLabels") var healthLabels: List<String>
 )
