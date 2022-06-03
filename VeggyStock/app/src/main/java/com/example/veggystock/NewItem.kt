@@ -110,8 +110,8 @@ class NewItem : AppCompatActivity() {
         }
 
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId){
-                R.id.scan_item->{
+            when (menuItem.itemId) {
+                R.id.scan_item -> {
                     requestPermission()
                     true
                 }
@@ -219,13 +219,14 @@ class NewItem : AppCompatActivity() {
 
                     CoroutineScope(Dispatchers.IO).launch {
                         //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
-                        val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?session=40&app_id=f92aec81&app_key=0efe25b2bec1d420f5f78f7deaa3358c&ingr=rice&nutrition-type=cooking&health=vegetarian")
+                        val apiCall = getRetrofit().create(ApiService::class.java)
+                            .foodDatabase("parser?session=40&app_id=f92aec81&app_key=0efe25b2bec1d420f5f78f7deaa3358c&ingr=rice&nutrition-type=cooking&health=vegetarian")
                         val data = apiCall.body()
                         //&nutrition-type=cooking&health=vegetarian
                         runOnUiThread {
-                            if(apiCall.isSuccessful) {
+                            if (apiCall.isSuccessful) {
                                 Log.d("API DATA ->>", data.toString())
-                            }else{
+                            } else {
                                 Log.d("ERROR ->>", "API CALL NOT SUCCESFUL")
                             }
                         }

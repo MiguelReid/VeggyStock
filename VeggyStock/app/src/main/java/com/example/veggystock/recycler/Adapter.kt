@@ -69,12 +69,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${element.address}"))
             context.startActivity(searchAddress)
         }
-        /*
-        holder.binding.btnItem.setOnLongClickListener {
-
-            return@setOnLongClickListener true
-        }
-         */
 
         holder.binding.imgHeart?.setOnClickListener {
             val activity: Items = holder.itemView.context as Items
@@ -98,8 +92,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 reference.setValue(false)
                 false
             }
-
-
         }
     }
 
@@ -107,16 +99,15 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         return list.count()
     }
 
-    fun removeAt(position: Int) {
+    fun removeAt(position: Int, email:String) {
         val element = list[position]
         list.removeAt(position)
         val ref = FirebaseDatabase.getInstance().reference
-        val applesQuery = ref.child("items").orderByChild("name").equalTo(element.name)
+        val applesQuery = ref.child("Users").child(email).orderByChild("name").equalTo(element.name)
         applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (appleSnapshot in dataSnapshot.children) {
                     appleSnapshot.ref.removeValue()
-                    Log.d(TAG, appleSnapshot.toString())
                 }
             }
 

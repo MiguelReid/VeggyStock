@@ -124,7 +124,7 @@ class Items : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = binding.recycler.adapter as Adapter
-                adapter.removeAt(viewHolder.adapterPosition)
+                adapter.removeAt(viewHolder.adapterPosition, email)
             }
         }
         val ith = ItemTouchHelper(touchHelper)
