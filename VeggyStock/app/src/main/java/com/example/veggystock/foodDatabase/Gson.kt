@@ -2,14 +2,19 @@ package com.example.veggystock.foodDatabase
 
 import com.google.gson.annotations.SerializedName
 
+data class Hints(
+    @SerializedName("hints") var listHints: List<Food>
+)
+
+data class Food(
+    @SerializedName("food") var food: Gson
+)
+
 data class Gson(
     @SerializedName("label") var label: String,
     @SerializedName("image") var image: String,
-    @SerializedName("nutrients") var nutrients: List<NutrientsGson>
-)
-
-data class HintsGson(
-    @SerializedName("hints") var listHints: List<Gson>
+    @SerializedName("foodId") var id: String,
+    @SerializedName("nutrients") var nutrients: NutrientsGson
 )
 
 data class NutrientsGson(

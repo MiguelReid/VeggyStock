@@ -6,7 +6,7 @@ import retrofit2.http.Url
 
 interface ApiService {
     @GET
-    suspend fun foodDatabase(@Url url: String): Response<HintsGson>
+    suspend fun foodDatabase(@Url url: String): Response<Hints>
 
     @GET
     suspend fun foodAnalysis(@Url url: String): Response<Gson2>
