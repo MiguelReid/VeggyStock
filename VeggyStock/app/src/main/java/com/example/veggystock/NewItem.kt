@@ -252,8 +252,19 @@ class NewItem : AppCompatActivity() {
                                         }
                                     }
                                 }
-                            }else{
-                                alert = true
+                            } else {
+                                runOnUiThread {
+                                    MaterialAlertDialogBuilder(
+                                        this@NewItem,
+                                        R.style.alertDialogInconclusive
+                                    )
+                                        .setTitle("Item not found")
+                                        .setMessage("This item is not on our database")
+                                        .setNeutralButton(resources.getString(R.string.close)) { dialog, which ->
+                                            // Respond to negative button press
+                                        }
+                                        .show()
+                                }
                             }
                         }
                     }
@@ -262,16 +273,6 @@ class NewItem : AppCompatActivity() {
             .addOnFailureListener {
                 Log.e("PROBLEM ->>>>>>", "BARCODE NOT RECOGNIZED")
             }
-
-        if(alert){
-            MaterialAlertDialogBuilder(this@NewItem, R.style.alertDialogInconclusive)
-                .setTitle("Item not found")
-                .setMessage("This item is not on our database")
-                .setNeutralButton(resources.getString(R.string.close)) { dialog, which ->
-                    // Respond to negative button press
-                }
-                .show()
-        }
     }
 
     private fun alertBuilder(style: Int, message: String) {
