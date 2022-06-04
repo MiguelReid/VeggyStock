@@ -32,4 +32,10 @@
         <item name="cornerFamily">cut</item>
         <item name="cornerSize">4dp</item>
     </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/background_blue</item>
+        <item name="colorSecondary">@color/main_blue</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
+    </style>
 </resources>

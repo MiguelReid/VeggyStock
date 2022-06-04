@@ -66,16 +66,9 @@ class NewItem : AppCompatActivity() {
         check()
     }
 
-    private fun getRetrofitDatabase(): Retrofit {
+    private fun getRetrofit(urlBase: String): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(urlBaseDatabase)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    private fun getRetrofitNutrition(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(urlBaseNutrition)
+            .baseUrl(urlBase)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -89,6 +82,7 @@ class NewItem : AppCompatActivity() {
             binding.inputStreet?.editText
         )
         for (editText in editTexts) {
+
             editText?.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                     val et1 = binding.inputName?.editText?.text.toString().trim()
@@ -102,24 +96,13 @@ class NewItem : AppCompatActivity() {
                             && et4.isNotEmpty()
                 }
 
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun afterTextChanged(
-                    s: Editable
-                ) {
-                }
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int){}
+                override fun afterTextChanged(s: Editable){}
             })
         }
     }
 
     private fun menu() {
-        binding.topBarNewItem?.setNavigationOnClickListener {
-            // Handle navigation icon press
-        }
-
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.scan_item -> {
@@ -129,7 +112,6 @@ class NewItem : AppCompatActivity() {
                 else -> false
             }
         }
-
     }
 
     private fun listener() {
@@ -224,32 +206,28 @@ class NewItem : AppCompatActivity() {
 
                     CoroutineScope(Dispatchers.IO).launch {
                         //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
-                        val apiCall = getRetrofitDatabase().create(ApiService::class.java)
-                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=rice&nutrition-type=cooking&health=vegetarian")
+                        val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
+                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=lamb&nutrition-type=cooking")
+                        //&health=vegetarian
                         val data = apiCall.body()
 
-                        val apiCall2 = getRetrofitNutrition().create(ApiService::class.java)
+                        val apiCall2 = getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                             .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${data?.listHints?.first()?.food?.id}")
                         val data2 = apiCall2.body()
 
                         runOnUiThread {
                             if (apiCall.isSuccessful && data != null) {
+                                Log.d("INFO ID ->>>", data.listHints.first().food.id)
                                 if (apiCall2.isSuccessful && data2 != null) {
                                     Log.d("SUCCESS ->>>", "API CALL NUTRITION DATA SUCCESFUL")
                                     if (data2.healthLabels.contains("VEGAN")) {
-                                        MaterialAlertDialogBuilder(this@NewItem, R.style.alertDialogPositive)
-                                            .setTitle("Save Item?")
-                                            .setMessage("${data.listHints.first().food.label} is vegan")
-                                                //TODO $healthLabel en vez de is vegan por el menu hecho antes
-                                            .setNeutralButton(resources.getString(R.string.no)) { dialog, which ->
-                                                // Respond to negative button press
-                                            }
-                                            .setPositiveButton(resources.getString(R.string.save)) { dialog, which ->
-                                                // Respond to positive button press
-                                            }
-                                            .show()
+                                        Log.d("INFO ->>", "IT IS VEGAN!!")
+                                        Log.d("INFO ->>", data2.healthLabels.toString())
+                                        alertBuilder(R.style.alertDialogPositive, "${data.listHints.first().food.label} is vegan")
                                     } else {
-
+                                        Log.d("INFO ->>", "IT IS NOT VEGAN!!")
+                                        Log.d("INFO ->>", data2.healthLabels.toString())
+                                        alertBuilder(R.style.alertDialogNegative, "${data.listHints.first().food.label} is not vegan")
                                     }
                                 } else {
                                     Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
@@ -257,35 +235,24 @@ class NewItem : AppCompatActivity() {
                             }
                         }
                     }
-                    /*
-                    when (valueType) {
-                        Barcode.FORMAT_UPC_A -> {
-                            Log.i("TASK SUCCESFUL ->>>>>>", "UPC A")
-                            val upc = barcode.url
-                        }
-                        Barcode.FORMAT_UPC_E -> {
-                            Log.i("TASK SUCCESFUL ->>>>>>", "UPC E")
-                        }
-                        Barcode.FORMAT_CODABAR -> {
-                            Log.i("TASK SUCCESFUL ->>>>>>", "BARCODE")
-                            val title = barcode.url!!.title
-                            val url = barcode.url!!.url
-                        }
-                        Barcode.FORMAT_QR_CODE -> {
-                            Log.i
-
-                          ("TASK SUCCESFUL ->>", "QR CODE")
-                        }
-                        Barcode.TYPE_TEXT -> {
-                            val data = barcode.displayValue
-                        }
-                    }
-                     */
                 }
             }
             .addOnFailureListener {
                 Log.e("PROBLEM ->>>>>>", "BARCODE NOT RECOGNIZED")
             }
+    }
+
+    private fun alertBuilder(style: Int, message: String) {
+        MaterialAlertDialogBuilder(this@NewItem, style)
+            .setTitle("Save Item?")
+            .setMessage(message)
+            .setNeutralButton(resources.getString(R.string.no)) { dialog, which ->
+                // Respond to negative button press
+            }
+            .setPositiveButton(resources.getString(R.string.save)) { dialog, which ->
+                //TODO get the data
+            }
+            .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -342,7 +309,6 @@ class NewItem : AppCompatActivity() {
             }
         }
     }
-
 
     private fun initDB() {
         val intent = intent
