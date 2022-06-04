@@ -17,6 +17,7 @@
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/main_blue"
             app:layout_scrollFlags="scroll|enterAlways"
             app:menu="@menu/new_item_bar"
             app:title="@string/newItem" />
@@ -144,6 +145,7 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_marginTop="30dp"
+        android:backgroundTint="@color/background_blue"
         android:contentDescription="@string/productimage"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

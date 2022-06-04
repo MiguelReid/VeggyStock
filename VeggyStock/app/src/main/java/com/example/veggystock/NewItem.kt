@@ -20,6 +20,7 @@ import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -128,7 +129,13 @@ class NewItem : AppCompatActivity() {
 
     private fun listener() {
         binding.btnSave.setOnClickListener {
-            saveItem()
+            val name = binding.inputName?.editText?.text.toString()
+            val provider = binding.inputProvider?.editText?.text.toString()
+            val aux = binding.inputPrice?.editText?.text.toString()
+            val price = aux.toFloat()
+            val rating = binding.ratingBar.rating
+            val address = binding.inputStreet?.editText?.text.toString()
+            saveItem(name, provider, price, rating, address)
             onBackPressed()
         }
         binding.imageButton.setOnClickListener {
@@ -180,20 +187,21 @@ class NewItem : AppCompatActivity() {
         )
     }
 
-    private fun saveItem() {
-        val name = binding.inputName?.editText?.text.toString()
-        val provider = binding.inputProvider?.editText?.text.toString()
-        val aux = binding.inputPrice?.editText?.text.toString()
-        val price = aux.toFloat()
-        val rating = binding.ratingBar.rating
-        val address = binding.inputStreet?.editText?.text.toString()
+    private fun saveItem(
+        name: String,
+        provider: String,
+        price: Float,
+        rating: Float,
+        address: String
+    ) {
         val fileName = "$name $provider $address"
         initDB()
         uploadImage()
         reference.child(fileName)
             .setValue(Body(name, provider, price, address, rating, false)).addOnSuccessListener {
             }.addOnFailureListener {
-                Toast.makeText(this, "Item Not Saved", Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, R.string.item_not_saved, Snackbar.LENGTH_SHORT)
+                    .show()
             }
     }
 
@@ -219,7 +227,7 @@ class NewItem : AppCompatActivity() {
                     CoroutineScope(Dispatchers.IO).launch {
                         //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
                         val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
-                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=arroz&nutrition-type=cooking")
+                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=rice&nutrition-type=cooking")
                         //&health=vegetarian
                         val apiCallBody = apiCall.body()
                         if (apiCall.isSuccessful) {
@@ -230,26 +238,20 @@ class NewItem : AppCompatActivity() {
                                 apiCall2Body = apiCall2.body()!!
 
                                 runOnUiThread {
-                                    if (apiCall.isSuccessful) {
-                                        if (apiCall2.isSuccessful) {
-                                            Log.d(
-                                                "SUCCESS ->>>",
-                                                "API CALL NUTRITION DATA SUCCESFUL"
+                                    if (apiCall.isSuccessful && apiCall2.isSuccessful) {
+                                        if (apiCall2Body.healthLabels.contains("VEGAN")) {
+                                            alertBuilder(
+                                                R.style.alertDialogPositive,
+                                                "${apiCallBody.listHints.first().food.label} is Vegan"
                                             )
-                                            if (apiCall2Body.healthLabels.contains("VEGAN")) {
-                                                alertBuilder(
-                                                    R.style.alertDialogPositive,
-                                                    "${apiCallBody.listHints.first().food.label} is vegan"
-                                                )
-                                            } else {
-                                                alertBuilder(
-                                                    R.style.alertDialogNegative,
-                                                    "${apiCallBody.listHints.first().food.label} is not vegan"
-                                                )
-                                            }
                                         } else {
-                                            Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
+                                            alertBuilder(
+                                                R.style.alertDialogNegative,
+                                                "${apiCallBody.listHints.first().food.label} is not Vegan"
+                                            )
                                         }
+                                    } else {
+                                        Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
                                     }
                                 }
                             } else {

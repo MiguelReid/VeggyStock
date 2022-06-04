@@ -7,4 +7,11 @@
         android:icon="@drawable/scan"
         android:title="@string/scan"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/search_database"
+        android:contentDescription="@string/content_description_search_database"
+        android:icon="@drawable/searchDatabase"
+        android:title="@string/search_database"
+        app:showAsAction="ifRoom" />
 </menu>
