@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
+import com.example.veggystock.foodDatabase.Gson2
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DatabaseReference
@@ -31,6 +32,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
@@ -54,6 +56,9 @@ class NewItem : AppCompatActivity() {
     private var urlBaseNutrition = "https://api.edamam.com/api/"
     private var appIdNutrition = "d1e4b94c"
     private var appKeyNutrition = "f461b422fb6f8acec69fe9b7badc15d8"
+    lateinit var apiCall2: Response<Gson2>
+    lateinit var apiCall2Body: Gson2
+    private var alert: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -96,8 +101,15 @@ class NewItem : AppCompatActivity() {
                             && et4.isNotEmpty()
                 }
 
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int){}
-                override fun afterTextChanged(s: Editable){}
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun afterTextChanged(s: Editable) {}
             })
         }
     }
@@ -207,31 +219,41 @@ class NewItem : AppCompatActivity() {
                     CoroutineScope(Dispatchers.IO).launch {
                         //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
                         val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
-                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=lamb&nutrition-type=cooking")
+                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=arroz&nutrition-type=cooking")
                         //&health=vegetarian
-                        val data = apiCall.body()
+                        val apiCallBody = apiCall.body()
+                        if (apiCall.isSuccessful) {
+                            if (!apiCallBody?.listHints?.isEmpty()!!) {
+                                apiCall2 =
+                                    getRetrofit(urlBaseNutrition).create(ApiService::class.java)
+                                        .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
+                                apiCall2Body = apiCall2.body()!!
 
-                        val apiCall2 = getRetrofit(urlBaseNutrition).create(ApiService::class.java)
-                            .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${data?.listHints?.first()?.food?.id}")
-                        val data2 = apiCall2.body()
-
-                        runOnUiThread {
-                            if (apiCall.isSuccessful && data != null) {
-                                Log.d("INFO ID ->>>", data.listHints.first().food.id)
-                                if (apiCall2.isSuccessful && data2 != null) {
-                                    Log.d("SUCCESS ->>>", "API CALL NUTRITION DATA SUCCESFUL")
-                                    if (data2.healthLabels.contains("VEGAN")) {
-                                        Log.d("INFO ->>", "IT IS VEGAN!!")
-                                        Log.d("INFO ->>", data2.healthLabels.toString())
-                                        alertBuilder(R.style.alertDialogPositive, "${data.listHints.first().food.label} is vegan")
-                                    } else {
-                                        Log.d("INFO ->>", "IT IS NOT VEGAN!!")
-                                        Log.d("INFO ->>", data2.healthLabels.toString())
-                                        alertBuilder(R.style.alertDialogNegative, "${data.listHints.first().food.label} is not vegan")
+                                runOnUiThread {
+                                    if (apiCall.isSuccessful) {
+                                        if (apiCall2.isSuccessful) {
+                                            Log.d(
+                                                "SUCCESS ->>>",
+                                                "API CALL NUTRITION DATA SUCCESFUL"
+                                            )
+                                            if (apiCall2Body.healthLabels.contains("VEGAN")) {
+                                                alertBuilder(
+                                                    R.style.alertDialogPositive,
+                                                    "${apiCallBody.listHints.first().food.label} is vegan"
+                                                )
+                                            } else {
+                                                alertBuilder(
+                                                    R.style.alertDialogNegative,
+                                                    "${apiCallBody.listHints.first().food.label} is not vegan"
+                                                )
+                                            }
+                                        } else {
+                                            Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
+                                        }
                                     }
-                                } else {
-                                    Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
                                 }
+                            }else{
+                                alert = true
                             }
                         }
                     }
@@ -240,6 +262,16 @@ class NewItem : AppCompatActivity() {
             .addOnFailureListener {
                 Log.e("PROBLEM ->>>>>>", "BARCODE NOT RECOGNIZED")
             }
+
+        if(alert){
+            MaterialAlertDialogBuilder(this@NewItem, R.style.alertDialogInconclusive)
+                .setTitle("Item not found")
+                .setMessage("This item is not on our database")
+                .setNeutralButton(resources.getString(R.string.close)) { dialog, which ->
+                    // Respond to negative button press
+                }
+                .show()
+        }
     }
 
     private fun alertBuilder(style: Int, message: String) {
