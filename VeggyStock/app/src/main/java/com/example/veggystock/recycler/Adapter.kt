@@ -11,17 +11,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.Items
+import com.example.veggystock.NewItem
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 var favourite = false
+val scope = CoroutineScope(Dispatchers.IO)
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
 
@@ -57,17 +63,19 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         val address = element.address
 
         val imageName = "$name $provider $address"
+        scope.launch {
+            val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
+            val localfile = File.createTempFile("tempImage", "jpg")
+            storageRef.getFile(localfile).addOnSuccessListener {
 
-        val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
-        val localfile =
-            File.createTempFile("tempImage", "jpg")
-        storageRef.getFile(localfile).addOnSuccessListener {
-
-            val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-            holder.binding.btnItem.setImageBitmap(bitmap)
-            //Picasso.get()!!.load(bitmap).resize(138, 166).centerCrop().into(holder.binding.btnItem)
-        }.addOnFailureListener {
-            Log.e(TAG, "Failed to retrieve the image")
+                val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
+                holder.binding.btnItem.setImageBitmap(bitmap)
+                val newitem: NewItem = holder.itemView.context as NewItem
+                val uri = newitem.bitmapToUri(bitmap)
+                Picasso.get()!!.load(uri).resize(138, 166).centerCrop().into(holder.binding.btnItem)
+            }.addOnFailureListener {
+                Log.e("ERROR ->> ", "Failed to retrieve the image")
+            }
         }
 
         holder.binding.btnItem.setOnClickListener {
@@ -77,7 +85,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         }
 
         holder.binding.imgHeart?.setOnClickListener {
-
             reference =
                 FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                     .getReference("Users").child(email.toString()).child(imageName)
@@ -103,12 +110,12 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("Users").child(email.toString()).child(imageName)
-                .child("vegan")
 
         reference.orderByChild("vegan").equalTo(true)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
+                        Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
                         holder.binding.imageVeggy?.visibility = View.VISIBLE
                         /*
                         for (itemSnapshot in snapshot.children) {
@@ -120,7 +127,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                         holder.binding.imageVeggy?.visibility = View.INVISIBLE
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

@@ -52,4 +52,6 @@
     <string name="item_not_saved">Item not saved</string>
     <string name="content_description_search_database">Search in database</string>
     <string name="search_database">Search in database</string>
+    <string name="introduce_value">You must introduce a value</string>
+    <string name="item_saved">Item saved</string>
 </resources>

@@ -15,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
@@ -134,14 +135,14 @@ class NewItem : AppCompatActivity() {
 
     private fun searchDatabase() {
         val name = binding.inputName?.editText?.text.toString()
-        if (name.isNotEmpty())
+        if (name.isNotEmpty()) {
             CoroutineScope(Dispatchers.IO).launch {
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
+                apiCallBody = apiCall.body()!!
                 //&health=vegetarian
                 if (apiCall.isSuccessful) {
                     if (apiCallBody.listHints.isNotEmpty()) {
-                        apiCallBody = apiCall.body()!!
                         apiCall2 =
                             getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                 .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
@@ -178,6 +179,9 @@ class NewItem : AppCompatActivity() {
                     }
                 }
             }
+        } else {
+            binding.inputName?.error = "A name is required"
+        }
     }
 
     private fun alertNotFound() {
@@ -203,7 +207,7 @@ class NewItem : AppCompatActivity() {
             val rating = binding.ratingBar.rating
             val address = binding.inputStreet?.editText?.text.toString()
             var vegan = false
-            if(binding.checkVeggy?.isChecked == true) {
+            if (binding.checkVeggy?.isChecked == true) {
                 vegan = true
             }
             saveItem(name, provider, price, rating, address, vegan)
@@ -272,6 +276,8 @@ class NewItem : AppCompatActivity() {
         reference.child(fileName)
             .setValue(Body(name, provider, price, address, rating, false, vegan))
             .addOnSuccessListener {
+                Snackbar.make(binding.root, R.string.item_saved, Snackbar.LENGTH_SHORT)
+                    .show()
             }.addOnFailureListener {
                 Snackbar.make(binding.root, R.string.item_not_saved, Snackbar.LENGTH_SHORT)
                     .show()
@@ -360,33 +366,36 @@ class NewItem : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == 100 && resultCode == RESULT_OK) {
             imageUri = data?.data!!
-            if (binding.switchCamera?.isChecked == true)
-                Picasso.get()!!.load(imageUri).resize(300, 300).centerCrop()
-                    .into(binding.imageButton)
+            //if (binding.switchCamera?.isChecked == true)
+            Picasso.get()!!.load(imageUri).fit().centerCrop().into(binding.imageButton)
         }
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
-
-            val baos = ByteArrayOutputStream()
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            data2 = baos.toByteArray()
-
-            val file = File(cacheDir, "filename.jpg")
-            file.createNewFile()
-            val fileOS = FileOutputStream(file)
-            fileOS.write(data2)
-            fileOS.flush()
-            fileOS.close()
+            val file2 = bitmapToUri(imageBitmap)
             if (binding.switchCamera?.isChecked == true) {
-                binding.imageButton.setImageBitmap(imageBitmap)
+                //binding.imageButton.setImageBitmap(imageBitmap)
+                Picasso.get().load(file2).fit().into(binding.imageButton)
             } else {
                 scanBarcodes(imageBitmap)
             }
         }
+    }
+
+    fun bitmapToUri(imageBitmap: Bitmap): Uri {
+        val baos = ByteArrayOutputStream()
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        data2 = baos.toByteArray()
+        val file = File(cacheDir, "filename.jpg")
+        file.createNewFile()
+        val fileOS = FileOutputStream(file)
+        fileOS.write(data2)
+        fileOS.flush()
+        fileOS.close()
+        baos.close()
+        return file.toUri()
     }
 
     private fun uploadImage() {

@@ -17,7 +17,6 @@ import com.google.firebase.database.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 
@@ -32,6 +31,7 @@ class Items : AppCompatActivity() {
     private val regex = Regex("[^A-Za-z0-9]")
     private lateinit var email: String
     val scope = CoroutineScope(Dispatchers.IO)
+    val scope2 = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
@@ -83,8 +83,8 @@ class Items : AppCompatActivity() {
                 newTab: AnimatedBottomBar.Tab
             ) {
                 when (newIndex) {
-                    0 -> scope.launch{fillAll()}
-                    1 -> scope.launch{fillFavourites()}
+                    0 -> scope.launch { fillAll() }
+                    1 -> scope.launch { fillFavourites() }
                 }
             }
         })
@@ -140,43 +140,45 @@ class Items : AppCompatActivity() {
     }
 
     private fun search() {
-        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                return true
-            }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
-                if (p0 != null) {
-                    if (p0.isNotEmpty()) {
-                        arrayList.clear()
-                        val search = p0.lowercase(Locale.getDefault())
-                        list.forEach {
-                            if (it.name.lowercase(Locale.getDefault()).contains(search)) {
-                                arrayList.add(it)
-                                adapter = Adapter(arrayList)
-                                binding.recycler.adapter = adapter
-                            }
-                        }
-                        binding.recycler.adapter?.notifyItemRangeChanged(0, list.size)
-                        return true
-                    } else {
-                        arrayList.clear()
-                        fillAll()
-                        adapter = Adapter(list)
-                        binding.recycler.adapter = adapter
-                        binding.recycler.adapter?.notifyItemRangeChanged(0, list.size)
-
-                    }
+        scope2.launch {
+            binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(p0: String?): Boolean {
+                    return true
                 }
-                return true
-            }
-        })
+
+                override fun onQueryTextChange(p0: String?): Boolean {
+                    if (p0 != null) {
+                        if (p0.isNotEmpty()) {
+                            arrayList.clear()
+                            val search = p0.lowercase(Locale.getDefault())
+                            list.forEach {
+                                if (it.name.lowercase(Locale.getDefault()).contains(search)) {
+                                    arrayList.add(it)
+                                    adapter = Adapter(arrayList)
+                                    binding.recycler.adapter = adapter
+                                }
+                            }
+                            binding.recycler.adapter?.notifyItemRangeChanged(0, list.size)
+                            return true
+                        } else {
+                            arrayList.clear()
+                            fillAll()
+                            adapter = Adapter(list)
+                            binding.recycler.adapter = adapter
+                            binding.recycler.adapter?.notifyItemRangeChanged(0, list.size)
+
+                        }
+                    }
+                    return true
+                }
+            })
+        }
     }
 
     private fun recycler() {
         binding.recycler.layoutManager = LinearLayoutManager(this)
         binding.recycler.setHasFixedSize(true)
-        scope.launch{fillAll()}
+        scope.launch { fillAll() }
         adapter = Adapter(list)
         binding.recycler.adapter = adapter
     }
