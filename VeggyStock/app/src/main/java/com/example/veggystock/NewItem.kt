@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
+import com.example.veggystock.foodDatabase.Hints
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -59,7 +60,7 @@ class NewItem : AppCompatActivity() {
     private var appKeyNutrition = "f461b422fb6f8acec69fe9b7badc15d8"
     lateinit var apiCall2: Response<Gson2>
     lateinit var apiCall2Body: Gson2
-    private var alert: Boolean = false
+    lateinit var apiCallBody: Hints
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -122,8 +123,74 @@ class NewItem : AppCompatActivity() {
                     requestPermission()
                     true
                 }
+                R.id.search_database -> {
+                    searchDatabase()
+                    true
+                }
                 else -> false
             }
+        }
+    }
+
+    private fun searchDatabase() {
+        val name = binding.inputName?.editText?.text.toString()
+        if (name.isNotEmpty())
+            CoroutineScope(Dispatchers.IO).launch {
+                val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
+                    .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
+                //&health=vegetarian
+                if (apiCall.isSuccessful) {
+                    if (apiCallBody.listHints.isNotEmpty()) {
+                        apiCallBody = apiCall.body()!!
+                        apiCall2 =
+                            getRetrofit(urlBaseNutrition).create(ApiService::class.java)
+                                .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
+
+                        runOnUiThread {
+                            if (apiCall2.isSuccessful) {
+                                apiCall2Body = apiCall2.body()!!
+
+                                if (apiCall2Body.healthLabels.contains("VEGAN")) {
+                                    alertBuilder(
+                                        R.style.alertDialogPositive,
+                                        "${
+                                            apiCallBody.listHints.first().food.label.replaceFirstChar(
+                                                Char::titlecase
+                                            )
+                                        } is Vegan"
+                                    )
+                                } else {
+                                    alertBuilder(
+                                        R.style.alertDialogNegative,
+                                        "${
+                                            apiCallBody.listHints.first().food.label.replaceFirstChar(
+                                                Char::titlecase
+                                            )
+                                        } is not Vegan"
+                                    )
+                                }
+                            } else {
+                                Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
+                            }
+                        }
+                    } else {
+                        alertNotFound()
+                    }
+                }
+            }
+    }
+
+    private fun alertNotFound() {
+        runOnUiThread {
+            MaterialAlertDialogBuilder(
+                this@NewItem,
+                R.style.alertDialogInconclusive
+            )
+                .setTitle("Item not found")
+                .setMessage("This item is not on our database")
+                .setNeutralButton(resources.getString(R.string.close)) { _, _ ->
+                }
+                .show()
         }
     }
 
@@ -135,7 +202,11 @@ class NewItem : AppCompatActivity() {
             val price = aux.toFloat()
             val rating = binding.ratingBar.rating
             val address = binding.inputStreet?.editText?.text.toString()
-            saveItem(name, provider, price, rating, address)
+            var vegan = false
+            if(binding.checkVeggy?.isChecked == true) {
+                vegan = true
+            }
+            saveItem(name, provider, price, rating, address, vegan)
             onBackPressed()
         }
         binding.imageButton.setOnClickListener {
@@ -192,13 +263,15 @@ class NewItem : AppCompatActivity() {
         provider: String,
         price: Float,
         rating: Float,
-        address: String
+        address: String,
+        vegan: Boolean
     ) {
         val fileName = "$name $provider $address"
         initDB()
         uploadImage()
         reference.child(fileName)
-            .setValue(Body(name, provider, price, address, rating, false)).addOnSuccessListener {
+            .setValue(Body(name, provider, price, address, rating, false, vegan))
+            .addOnSuccessListener {
             }.addOnFailureListener {
                 Snackbar.make(binding.root, R.string.item_not_saved, Snackbar.LENGTH_SHORT)
                     .show()
@@ -229,16 +302,17 @@ class NewItem : AppCompatActivity() {
                         val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                             .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=rice&nutrition-type=cooking")
                         //&health=vegetarian
-                        val apiCallBody = apiCall.body()
                         if (apiCall.isSuccessful) {
-                            if (!apiCallBody?.listHints?.isEmpty()!!) {
+                            if (apiCallBody.listHints.isNotEmpty()) {
+                                apiCallBody = apiCall.body()!!
                                 apiCall2 =
                                     getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                         .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
-                                apiCall2Body = apiCall2.body()!!
 
                                 runOnUiThread {
-                                    if (apiCall.isSuccessful && apiCall2.isSuccessful) {
+                                    if (apiCall2.isSuccessful) {
+                                        apiCall2Body = apiCall2.body()!!
+
                                         if (apiCall2Body.healthLabels.contains("VEGAN")) {
                                             alertBuilder(
                                                 R.style.alertDialogPositive,
@@ -255,18 +329,7 @@ class NewItem : AppCompatActivity() {
                                     }
                                 }
                             } else {
-                                runOnUiThread {
-                                    MaterialAlertDialogBuilder(
-                                        this@NewItem,
-                                        R.style.alertDialogInconclusive
-                                    )
-                                        .setTitle("Item not found")
-                                        .setMessage("This item is not on our database")
-                                        .setNeutralButton(resources.getString(R.string.close)) { dialog, which ->
-                                            // Respond to negative button press
-                                        }
-                                        .show()
-                                }
+                                alertNotFound()
                             }
                         }
                     }
@@ -281,13 +344,18 @@ class NewItem : AppCompatActivity() {
         MaterialAlertDialogBuilder(this@NewItem, style)
             .setTitle("Save Item?")
             .setMessage(message)
-            .setNeutralButton(resources.getString(R.string.no)) { dialog, which ->
-                // Respond to negative button press
-            }
-            .setPositiveButton(resources.getString(R.string.save)) { dialog, which ->
-                //TODO get the data
+            .setNeutralButton(resources.getString(R.string.close)) { _, _ -> }
+            .setNegativeButton(resources.getString(R.string.no)) { _, _ -> }
+            .setPositiveButton(resources.getString(R.string.save)) { _, _ ->
+                setData()
             }
             .show()
+    }
+
+    private fun setData() {
+        binding.inputName?.editText?.setText(apiCallBody.listHints.first().food.label)
+        Picasso.get()!!.load(apiCallBody.listHints.first().food.image).resize(138, 166).centerCrop()
+            .into(binding.imageButton)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

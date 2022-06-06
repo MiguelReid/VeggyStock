@@ -13,13 +13,12 @@ class SplashScreen : AppCompatActivity() {
 
     companion object {
         const val TIME_SPLASH_SCREEN = 1200L
-        private val TAG = SplashScreen::class.java.simpleName
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-
+        supportActionBar?.hide()
         exitSplashScreen()
     }
 

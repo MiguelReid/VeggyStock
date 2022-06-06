@@ -39,6 +39,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     }
 
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
+
+        val activity: Items = holder.itemView.context as Items
+        val map = activity.getData()
+        val email = map["EMAIL"]
+
         initDB()
         val element = list[position]
         holder.binding.tvName.text = element.name
@@ -72,9 +77,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         }
 
         holder.binding.imgHeart?.setOnClickListener {
-            val activity: Items = holder.itemView.context as Items
-            val map = activity.getData()
-            val email = map["EMAIL"]
 
             reference =
                 FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -98,13 +100,36 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 false
             }
         }
+        reference =
+            FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("Users").child(email.toString()).child(imageName)
+                .child("vegan")
+
+        reference.orderByChild("vegan").equalTo(true)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        holder.binding.imageVeggy?.visibility = View.VISIBLE
+                        /*
+                        for (itemSnapshot in snapshot.children) {
+                            val item = itemSnapshot.getValue(Body::class.java)
+                            list.add(item!!)
+                        }
+                         */
+                    } else {
+                        holder.binding.imageVeggy?.visibility = View.INVISIBLE
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     override fun getItemCount(): Int {
         return list.count()
     }
 
-    fun removeAt(position: Int, email:String) {
+    fun removeAt(position: Int, email: String) {
         val element = list[position]
         list.removeAt(position)
         val ref = FirebaseDatabase.getInstance().reference

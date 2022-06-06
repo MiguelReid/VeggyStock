@@ -11,7 +11,7 @@
     <item
         android:id="@+id/search_database"
         android:contentDescription="@string/content_description_search_database"
-        android:icon="@drawable/searchDatabase"
+        android:icon="@drawable/searchdatabase"
         android:title="@string/search_database"
         app:showAsAction="ifRoom" />
 </menu>

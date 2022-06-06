@@ -76,8 +76,8 @@
 
         <TextView
             android:id="@+id/tv_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="23dp"
             android:layout_marginTop="12dp"
             android:fontFamily="@font/colus"
             android:text="Calle Turquia"
@@ -98,5 +98,17 @@
             app:layout_constraintVertical_weight="1"
             app:lottie_enableMergePathsForKitKatAndAbove="true"
             tools:srcCompat="@drawable/heartfalse" />
+
+        <ImageView
+            android:id="@+id/image_veggy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/vegan" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

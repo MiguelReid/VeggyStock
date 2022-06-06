@@ -14,6 +14,10 @@ import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 
@@ -27,6 +31,7 @@ class Items : AppCompatActivity() {
     private lateinit var db: FirebaseDatabase
     private val regex = Regex("[^A-Za-z0-9]")
     private lateinit var email: String
+    val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
@@ -78,8 +83,8 @@ class Items : AppCompatActivity() {
                 newTab: AnimatedBottomBar.Tab
             ) {
                 when (newIndex) {
-                    0 -> fillAll()
-                    1 -> fillFavourites()
+                    0 -> scope.launch{fillAll()}
+                    1 -> scope.launch{fillFavourites()}
                 }
             }
         })
@@ -171,7 +176,7 @@ class Items : AppCompatActivity() {
     private fun recycler() {
         binding.recycler.layoutManager = LinearLayoutManager(this)
         binding.recycler.setHasFixedSize(true)
-        fillAll()
+        scope.launch{fillAll()}
         adapter = Adapter(list)
         binding.recycler.adapter = adapter
     }
