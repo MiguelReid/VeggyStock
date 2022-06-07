@@ -1,6 +1,5 @@
 package com.example.veggystock.recycler
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -11,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.Items
-import com.example.veggystock.NewItem
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
@@ -28,6 +26,8 @@ private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 var favourite = false
 val scope = CoroutineScope(Dispatchers.IO)
+private lateinit var data2: ByteArray
+private lateinit var uri: Uri
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
 
@@ -63,16 +63,21 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         val address = element.address
 
         val imageName = "$name $provider $address"
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
+        val localfile = File.createTempFile("tempImage", "jpg")
+        // File.createTempFile cannot be executed in a CoroutineScope
+
         scope.launch {
-            val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
-            val localfile = File.createTempFile("tempImage", "jpg")
             storageRef.getFile(localfile).addOnSuccessListener {
 
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-                holder.binding.btnItem.setImageBitmap(bitmap)
-                val newitem: NewItem = holder.itemView.context as NewItem
-                val uri = newitem.bitmapToUri(bitmap)
-                Picasso.get()!!.load(uri).resize(138, 166).centerCrop().into(holder.binding.btnItem)
+                Log.d("INFO ->>", imageName)
+                //holder.binding.btnItem.setImageBitmap(bitmap)
+                val items = Items()
+                uri = items.bitmapToUri(bitmap, context.cacheDir)
+                Log.d("INFO URI ->>", uri.toString())
+                Picasso.get()!!.load(uri).fit().into(holder.binding.btnItem)
+
             }.addOnFailureListener {
                 Log.e("ERROR ->> ", "Failed to retrieve the image")
             }
@@ -127,7 +132,10 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                         holder.binding.imageVeggy?.visibility = View.INVISIBLE
                     }
                 }
-                override fun onCancelled(error: DatabaseError) {}
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("ERROR ->>", error.message)
+                }
             })
     }
 
@@ -148,7 +156,7 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e(TAG, "onCancelled", databaseError.toException())
+                Log.e("PROBLEM ->>", "onCancelled", databaseError.toException())
             }
         })
         notifyItemRemoved(position)

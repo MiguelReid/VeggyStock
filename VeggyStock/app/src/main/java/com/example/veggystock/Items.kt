@@ -1,11 +1,15 @@
 package com.example.veggystock
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +22,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import nl.joery.animatedbottombar.AnimatedBottomBar
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -30,8 +37,9 @@ class Items : AppCompatActivity() {
     private lateinit var db: FirebaseDatabase
     private val regex = Regex("[^A-Za-z0-9]")
     private lateinit var email: String
-    val scope = CoroutineScope(Dispatchers.IO)
-    val scope2 = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope2 = CoroutineScope(Dispatchers.IO)
+    private lateinit var data2: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
@@ -54,6 +62,22 @@ class Items : AppCompatActivity() {
         val map = HashMap<String, String>()
         map["EMAIL"] = email
         return map
+    }
+
+    fun bitmapToUri(imageBitmap: Bitmap, cacheDir: File): Uri {
+        val baos = ByteArrayOutputStream()
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        data2 = baos.toByteArray()
+        val file = File(cacheDir, "uri.jpg")
+        file.delete()
+        // Just in case there is another File
+        file.createNewFile()
+        val fileOS = FileOutputStream(file)
+        fileOS.write(data2)
+        fileOS.flush()
+        fileOS.close()
+        baos.close()
+        return file.toUri()
     }
 
     private fun menu() {

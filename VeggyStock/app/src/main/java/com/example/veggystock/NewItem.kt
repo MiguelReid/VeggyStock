@@ -374,7 +374,8 @@ class NewItem : AppCompatActivity() {
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
-            val file2 = bitmapToUri(imageBitmap)
+            val items = Items()
+            val file2 = items.bitmapToUri(imageBitmap, cacheDir)
             if (binding.switchCamera?.isChecked == true) {
                 //binding.imageButton.setImageBitmap(imageBitmap)
                 Picasso.get().load(file2).fit().into(binding.imageButton)
@@ -382,20 +383,6 @@ class NewItem : AppCompatActivity() {
                 scanBarcodes(imageBitmap)
             }
         }
-    }
-
-    fun bitmapToUri(imageBitmap: Bitmap): Uri {
-        val baos = ByteArrayOutputStream()
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        data2 = baos.toByteArray()
-        val file = File(cacheDir, "filename.jpg")
-        file.createNewFile()
-        val fileOS = FileOutputStream(file)
-        fileOS.write(data2)
-        fileOS.flush()
-        fileOS.close()
-        baos.close()
-        return file.toUri()
     }
 
     private fun uploadImage() {
