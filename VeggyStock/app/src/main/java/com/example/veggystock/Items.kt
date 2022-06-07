@@ -1,7 +1,6 @@
 package com.example.veggystock
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -68,7 +67,8 @@ class Items : AppCompatActivity() {
         val baos = ByteArrayOutputStream()
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         data2 = baos.toByteArray()
-        val file = File(cacheDir, "uri.jpg")
+        val file = File(cacheDir, imageBitmap.toString())
+        // When calling it with imageBitmap.toString() each item has its image (before the same one repeated)
         file.delete()
         // Just in case there is another File
         file.createNewFile()

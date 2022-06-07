@@ -71,13 +71,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
             storageRef.getFile(localfile).addOnSuccessListener {
 
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-                Log.d("INFO ->>", imageName)
-                //holder.binding.btnItem.setImageBitmap(bitmap)
+                holder.binding.btnItem.setImageBitmap(bitmap)
                 val items = Items()
                 uri = items.bitmapToUri(bitmap, context.cacheDir)
-                Log.d("INFO URI ->>", uri.toString())
-                Picasso.get()!!.load(uri).fit().into(holder.binding.btnItem)
-
+                Picasso.get().load(uri).fit().into(holder.binding.btnItem)
+                //holder.binding.btnItem.setImageBitmap(bitmap)
             }.addOnFailureListener {
                 Log.e("ERROR ->> ", "Failed to retrieve the image")
             }
