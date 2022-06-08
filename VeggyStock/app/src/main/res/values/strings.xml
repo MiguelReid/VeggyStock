@@ -54,4 +54,6 @@
     <string name="search_database">Search in database</string>
     <string name="introduce_value">You must introduce a value</string>
     <string name="item_saved">Item saved</string>
+    <string name="signed_in">You signed in!</string>
+    <string name="not_signed_in">You didn\'t sign in</string>
 </resources>

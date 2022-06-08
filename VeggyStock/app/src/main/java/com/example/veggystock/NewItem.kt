@@ -143,7 +143,6 @@ class NewItem : AppCompatActivity() {
                         apiCall2 =
                             getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                 .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
-
                         uiThread()
                     } else {
                         alertNotFound()

@@ -15,7 +15,6 @@ import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +27,6 @@ private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
 var favourite = false
 val scope = CoroutineScope(Dispatchers.IO)
-private lateinit var data2: ByteArray
 private lateinit var uri: Uri
 
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
@@ -47,12 +45,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     }
 
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
-
+        initDB()
         val activity: Items = holder.itemView.context as Items
         val map = activity.getData()
         val email = map["EMAIL"]
 
-        initDB()
         val element = list[position]
         holder.binding.tvName.text = element.name
         holder.binding.tvProvider.text = element.provider
@@ -71,13 +68,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
         scope.launch {
             storageRef.getFile(localfile).addOnSuccessListener {
-
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
                 holder.binding.btnItem.setImageBitmap(bitmap)
                 val items = Items()
                 uri = items.bitmapToUri(bitmap, context.cacheDir)
                 Picasso.get().load(uri).fit().into(holder.binding.btnItem)
-                //holder.binding.btnItem.setImageBitmap(bitmap)
             }.addOnFailureListener {
                 Log.e("ERROR ->> ", "Failed to retrieve the image")
             }
@@ -117,7 +112,6 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 .getReference("Users").child(email.toString()).child(imageName).child("vegan")
 
         reference.get().addOnSuccessListener {
-            Log.i("firebase", "Got value ${it.value}")
             if (it.value == true) {
                 Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
                 holder.binding.imageVeggy?.visibility = View.VISIBLE
@@ -125,27 +119,9 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 holder.binding.imageVeggy?.visibility = View.INVISIBLE
                 Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " NOT VEGAN")
             }
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             Log.e("ERROR ->> ", "Vegan Icon error getting data", it)
         }
-        /*
-        reference.orderByChild("vegan").equalTo(true)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
-                        holder.binding.imageVeggy?.visibility = View.VISIBLE
-                    } else {
-                        holder.binding.imageVeggy?.visibility = View.INVISIBLE
-                        Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " NOT VEGAN")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("ERROR ->>", error.message)
-                }
-            })
-        */
     }
 
     override fun getItemCount(): Int {

@@ -4,15 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.veggystock.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.internal.AccountType
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
@@ -26,29 +25,43 @@ class MainActivity : AppCompatActivity() {
                 val task =
                     GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 try {
-                    val cuenta =
+                    val account =
                         task.getResult(ApiException::class.java)
-                    if (cuenta != null) {
-                        val credenciales = GoogleAuthProvider.getCredential(
-                            cuenta.idToken,
+                    if (account != null) {
+                        val credentials = GoogleAuthProvider.getCredential(
+                            account.idToken,
                             null
                         )
-                        FirebaseAuth.getInstance().signInWithCredential(credenciales)
+                        FirebaseAuth.getInstance().signInWithCredential(credentials)
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
-                                    irApp(cuenta.email ?: "")
-                                    Toast.makeText(this, "You signed in!", Toast.LENGTH_SHORT)
+                                    startApp(account.email ?: "")
+                                    Snackbar.make(
+                                        binding.root,
+                                        R.string.signed_in,
+                                        Snackbar.LENGTH_SHORT
+                                    )
                                         .show()
                                 } else {
-                                    mostrarError()
+                                    Snackbar.make(
+                                        binding.root,
+                                        R.string.not_signed_in,
+                                        Snackbar.LENGTH_SHORT
+                                    )
+                                        .show()
                                 }
                             }
                     }
                 } catch (e: ApiException) {
-                    Log.d("Error al validar con Google", e.localizedMessage!!.toString())
+                    Log.e("ERROR ->>", " Google validation error" + e.localizedMessage!!.toString())
                 }
             } else {
-                Toast.makeText(this, "ERROR AL INICIAR", Toast.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    R.string.not_signed_in,
+                    Snackbar.LENGTH_SHORT
+                )
+                    .show()
             }
         }
 
@@ -57,15 +70,15 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        ponerListener()
-        comprobarSesion()
+        listener()
+        checkSession()
         binding.btnGithub.setImageResource(R.drawable.github)
         binding.btnStack.setImageResource(R.drawable.stack)
     }
 
-    private fun ponerListener() {
+    private fun listener() {
         binding.btnLogin.setOnClickListener {
-            iniciarSesion()
+            signIn()
         }
         binding.btnGithub.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/MiguelReid"))
@@ -80,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun iniciarSesion() {
+    private fun signIn() {
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("839047811149-aaft2k41468q5kei1u2s2ltunavho5i3.apps.googleusercontent.com")
@@ -92,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         responseLauncher.launch(googleClient.signInIntent)
     }
 
-    private fun irApp(email: String) {
+    private fun startApp(email: String) {
         val i = Intent(this, Items::class.java).apply {
             putExtra("EMAIL", email)
             putExtra("PROVIDERS", AccountType.GOOGLE)
@@ -100,18 +113,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(i)
     }
 
-    private fun mostrarError() {
-        val alert =
-            AlertDialog.Builder(this).setTitle("Error").setMessage("Couldn't Sign In")
-                .setPositiveButton("Aceptar", null)
-                .create().show()
-
-    }
-
-    private fun comprobarSesion() {
+    private fun checkSession() {
         val provider = AccountType.GOOGLE
-
         if (email.isNotEmpty() && provider.isNotEmpty())
-            irApp(email)
+            startApp(email)
     }
 }
