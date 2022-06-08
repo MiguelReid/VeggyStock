@@ -165,7 +165,7 @@ class NewItem : AppCompatActivity() {
                             apiCallBody.listHints.first().food.label.replaceFirstChar(
                                 Char::titlecase
                             )
-                        } is Vegan"
+                        } is Vegan", true
                     )
                 } else {
                     alertBuilder(
@@ -174,7 +174,7 @@ class NewItem : AppCompatActivity() {
                             apiCallBody.listHints.first().food.label.replaceFirstChar(
                                 Char::titlecase
                             )
-                        } is not Vegan"
+                        } is not Vegan", false
                     )
                 }
             } else {
@@ -326,22 +326,23 @@ class NewItem : AppCompatActivity() {
             }
     }
 
-    private fun alertBuilder(style: Int, message: String) {
+    private fun alertBuilder(style: Int, message: String, veggy: Boolean) {
         MaterialAlertDialogBuilder(this@NewItem, style)
             .setTitle("Save Item?")
             .setMessage(message)
             .setNeutralButton(resources.getString(R.string.close)) { _, _ -> }
             .setNegativeButton(resources.getString(R.string.no)) { _, _ -> }
             .setPositiveButton(resources.getString(R.string.save)) { _, _ ->
-                setData()
+                setData(veggy)
             }
             .show()
     }
 
-    private fun setData() {
+    private fun setData(veggy: Boolean) {
         binding.inputName?.editText?.setText(apiCallBody.listHints.first().food.label)
         Picasso.get().load(apiCallBody.listHints.first().food.image).fit()
             .into(binding.imageButton)
+        binding.checkVeggy?.isChecked = veggy
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
