@@ -28,9 +28,6 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Media"
-            android:exported="false" />
-        <activity
             android:name=".Items"
             android:exported="false" />
         <activity

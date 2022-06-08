@@ -15,12 +15,14 @@ import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+
 
 private lateinit var reference: DatabaseReference
 private lateinit var db: FirebaseDatabase
@@ -112,22 +114,30 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         }
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("Users").child(email.toString()).child(imageName)
+                .getReference("Users").child(email.toString()).child(imageName).child("vegan")
 
+        reference.get().addOnSuccessListener {
+            Log.i("firebase", "Got value ${it.value}")
+            if (it.value == true) {
+                Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
+                holder.binding.imageVeggy?.visibility = View.VISIBLE
+            } else {
+                holder.binding.imageVeggy?.visibility = View.INVISIBLE
+                Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " NOT VEGAN")
+            }
+        }.addOnFailureListener{
+            Log.e("ERROR ->> ", "Vegan Icon error getting data", it)
+        }
+        /*
         reference.orderByChild("vegan").equalTo(true)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
                         holder.binding.imageVeggy?.visibility = View.VISIBLE
-                        /*
-                        for (itemSnapshot in snapshot.children) {
-                            val item = itemSnapshot.getValue(Body::class.java)
-                            list.add(item!!)
-                        }
-                         */
                     } else {
                         holder.binding.imageVeggy?.visibility = View.INVISIBLE
+                        Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " NOT VEGAN")
                     }
                 }
 
@@ -135,6 +145,7 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                     Log.e("ERROR ->>", error.message)
                 }
             })
+        */
     }
 
     override fun getItemCount(): Int {
@@ -144,9 +155,15 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
     fun removeAt(position: Int, email: String) {
         val element = list[position]
         list.removeAt(position)
+
+        val name = element.name
+        val provider = element.provider
+        val address = element.address
+        val imageName = "$name $provider $address"
+
         val ref = FirebaseDatabase.getInstance().reference
-        val applesQuery = ref.child("Users").child(email).orderByChild("name").equalTo(element.name)
-        applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+        val query = ref.child("Users").child(email).orderByChild("name").equalTo(name)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (appleSnapshot in dataSnapshot.children) {
                     appleSnapshot.ref.removeValue()
@@ -154,10 +171,21 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("PROBLEM ->>", "onCancelled", databaseError.toException())
+                Log.e("ERROR ->>", "onCancelled", databaseError.toException())
             }
         })
+        deleteImage(imageName)
         notifyItemRemoved(position)
+    }
+
+    private fun deleteImage(imageName: String) {
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
+        storageRef.delete()
+            .addOnSuccessListener {
+                Log.d("Success ->> ", "Image Deleted")
+            }.addOnFailureListener {
+                Log.e("ERROR ->> ", " image not deleted from Storage")
+            }
     }
 
     private fun initDB() {

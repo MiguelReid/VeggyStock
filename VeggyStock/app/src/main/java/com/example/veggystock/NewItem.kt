@@ -58,6 +58,7 @@ class NewItem : AppCompatActivity() {
     lateinit var apiCall2: Response<Gson2>
     lateinit var apiCall2Body: Gson2
     lateinit var apiCallBody: Hints
+    private var urlBaseUpc = "https://api.edamam.com/api/food-database/v2/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -135,41 +136,15 @@ class NewItem : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
-                apiCallBody = apiCall.body()!!
                 //&health=vegetarian
                 if (apiCall.isSuccessful) {
+                    apiCallBody = apiCall.body()!!
                     if (apiCallBody.listHints.isNotEmpty()) {
                         apiCall2 =
                             getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                 .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
 
-                        runOnUiThread {
-                            if (apiCall2.isSuccessful) {
-                                apiCall2Body = apiCall2.body()!!
-
-                                if (apiCall2Body.healthLabels.contains("VEGAN")) {
-                                    alertBuilder(
-                                        R.style.alertDialogPositive,
-                                        "${
-                                            apiCallBody.listHints.first().food.label.replaceFirstChar(
-                                                Char::titlecase
-                                            )
-                                        } is Vegan"
-                                    )
-                                } else {
-                                    alertBuilder(
-                                        R.style.alertDialogNegative,
-                                        "${
-                                            apiCallBody.listHints.first().food.label.replaceFirstChar(
-                                                Char::titlecase
-                                            )
-                                        } is not Vegan"
-                                    )
-                                }
-                            } else {
-                                Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
-                            }
-                        }
+                        uiThread()
                     } else {
                         alertNotFound()
                     }
@@ -177,6 +152,35 @@ class NewItem : AppCompatActivity() {
             }
         } else {
             binding.inputName?.error = "A name is required"
+        }
+    }
+
+    private fun uiThread() {
+        runOnUiThread {
+            if (apiCall2.isSuccessful) {
+                apiCall2Body = apiCall2.body()!!
+                if (apiCall2Body.healthLabels.contains("VEGAN")) {
+                    alertBuilder(
+                        R.style.alertDialogPositive,
+                        "${
+                            apiCallBody.listHints.first().food.label.replaceFirstChar(
+                                Char::titlecase
+                            )
+                        } is Vegan"
+                    )
+                } else {
+                    alertBuilder(
+                        R.style.alertDialogNegative,
+                        "${
+                            apiCallBody.listHints.first().food.label.replaceFirstChar(
+                                Char::titlecase
+                            )
+                        } is not Vegan"
+                    )
+                }
+            } else {
+                Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
+            }
         }
     }
 
@@ -300,36 +304,17 @@ class NewItem : AppCompatActivity() {
                     Log.d("RAWVALUE ->>>", rawValue)
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        //val apiCall = getRetrofit().create(ApiService::class.java).foodDatabase("parser?app_id=$appId&app_key=$appKey&upc=$rawValue")
-                        val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
-                            .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=rice&nutrition-type=cooking")
+                        val apiCall = getRetrofit(urlBaseUpc).create(ApiService::class.java)
+                            .foodDatabase("parser?app_id=$appIdDatabase&app_key=$appKeyDatabase&upc=$rawValue")
                         //&health=vegetarian
                         if (apiCall.isSuccessful) {
+                            apiCallBody = apiCall.body()!!
                             if (apiCallBody.listHints.isNotEmpty()) {
-                                apiCallBody = apiCall.body()!!
                                 apiCall2 =
                                     getRetrofit(urlBaseNutrition).create(ApiService::class.java)
-                                        .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
-
-                                runOnUiThread {
-                                    if (apiCall2.isSuccessful) {
-                                        apiCall2Body = apiCall2.body()!!
-
-                                        if (apiCall2Body.healthLabels.contains("VEGAN")) {
-                                            alertBuilder(
-                                                R.style.alertDialogPositive,
-                                                "${apiCallBody.listHints.first().food.label} is Vegan"
-                                            )
-                                        } else {
-                                            alertBuilder(
-                                                R.style.alertDialogNegative,
-                                                "${apiCallBody.listHints.first().food.label} is not Vegan"
-                                            )
-                                        }
-                                    } else {
-                                        Log.e("PROBLEM ->>", "API CALL NOT SUCCESFUL")
-                                    }
-                                }
+                                        .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&ingr=${apiCallBody.listHints.first().food.id}")
+                                //&nutrition-type=cooking
+                                uiThread()
                             } else {
                                 alertNotFound()
                             }
@@ -356,7 +341,7 @@ class NewItem : AppCompatActivity() {
 
     private fun setData() {
         binding.inputName?.editText?.setText(apiCallBody.listHints.first().food.label)
-        Picasso.get()!!.load(apiCallBody.listHints.first().food.image).resize(138, 166).centerCrop()
+        Picasso.get().load(apiCallBody.listHints.first().food.image).fit()
             .into(binding.imageButton)
     }
 

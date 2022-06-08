@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient"
+    android:background="@color/background_blue"
     tools:context=".MainActivity">
 
         <com.google.android.gms.common.SignInButton
@@ -12,7 +12,7 @@
             android:layout_width="139dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="35dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -21,12 +21,12 @@
             android:id="@+id/textView5"
             android:layout_width="295dp"
             android:layout_height="141dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="50dp"
             android:fontFamily="@font/colus"
             android:text="Welcome \nBack!!"
             android:textColor="#176C64"
-            android:textSize="50sp"
+            android:textSize="45sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +37,7 @@
             android:layout_height="53dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="28dp"
-            android:backgroundTint="#32948B"
+            android:backgroundTint="@color/background_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_stack"
             app:srcCompat="@drawable/github"
@@ -49,7 +49,7 @@
             android:layout_height="53dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="30dp"
-            android:backgroundTint="#32948B"
+            android:backgroundTint="@color/background_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/stack"

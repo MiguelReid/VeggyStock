@@ -103,7 +103,7 @@
             android:id="@+id/image_veggy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="30dp"
             android:layout_marginBottom="10dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
