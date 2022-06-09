@@ -19,6 +19,22 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     var email = ""
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        listener()
+        checkSession()
+        binding.btnGithub.setImageResource(R.drawable.github)
+        binding.btnStack.setImageResource(R.drawable.stack)
+    }
+
+    /*
+    Boiler plate code to signIn with
+    firebase authenticator
+     */
+
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
@@ -65,16 +81,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        supportActionBar?.hide()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        listener()
-        checkSession()
-        binding.btnGithub.setImageResource(R.drawable.github)
-        binding.btnStack.setImageResource(R.drawable.stack)
-    }
+    /*
+    Listeners to control the action started
+    when you click a button
+     */
 
     private fun listener() {
         binding.btnLogin.setOnClickListener {
@@ -93,6 +103,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    It signs you in into the app
+    with the necessary elements
+     */
+
     private fun signIn() {
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -105,6 +120,11 @@ class MainActivity : AppCompatActivity() {
         responseLauncher.launch(googleClient.signInIntent)
     }
 
+    /*
+    It starts an activity sending the
+    email (needed for every action in realtime database)
+     */
+
     private fun startApp(email: String) {
         val i = Intent(this, Items::class.java).apply {
             putExtra("EMAIL", email)
@@ -112,6 +132,10 @@ class MainActivity : AppCompatActivity() {
         }
         startActivity(i)
     }
+
+    /*
+    It checks if there is another session opened
+     */
 
     private fun checkSession() {
         val provider = AccountType.GOOGLE

@@ -49,19 +49,29 @@ class Items : AppCompatActivity() {
         val emailAux = intent.getStringExtra("EMAIL")
         email = regex.replace(emailAux.toString(), "")
         initDB()
-        recycler()
+        scope.launch { recycler() }
         search()
         swipe()
         menu()
-        getData()
+        scope2.launch { getData() }
     }
 
+    /*
+    Hash map I can use to send information to the Adapter class
+    this way I can use the email
+    to modify data in realtime database
+     */
+
     fun getData(): HashMap<String, String> {
-        // For sending information to the adapter
         val map = HashMap<String, String>()
         map["EMAIL"] = email
         return map
     }
+
+    /*
+    I need images in Uri format to be able
+    to manipulate them with Picasso
+     */
 
     fun bitmapToUri(imageBitmap: Bitmap, cacheDir: File): Uri {
         val baos = ByteArrayOutputStream()
@@ -81,10 +91,6 @@ class Items : AppCompatActivity() {
     }
 
     private fun menu() {
-        binding.topAppBar?.setNavigationOnClickListener {
-            // Handle navigation icon press
-        }
-
         binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.orderBy -> {
@@ -93,6 +99,10 @@ class Items : AppCompatActivity() {
                 }
                 R.id.item_new -> {
                     newItem()
+                    true
+                }
+                R.id.maps -> {
+                    maps()
                     true
                 }
                 else -> false
@@ -113,6 +123,16 @@ class Items : AppCompatActivity() {
             }
         })
     }
+
+    // Opens an activity
+    private fun maps() {
+        startActivity(Intent(this, Maps::class.java))
+    }
+
+    /*
+    Filling the recyclerView with only items that have
+    the favourite value in realtime database = true
+     */
 
     private fun fillFavourites() {
         list.clear()
@@ -138,9 +158,18 @@ class Items : AppCompatActivity() {
             })
     }
 
+    /*
+    To order the recyclerView by different ways
+     */
+
     private fun orderByMenu() {
 
     }
+
+    /*
+    It makes it possible to delete an item
+    when swiping it to the left
+     */
 
     private fun swipe() {
         val touchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -162,6 +191,12 @@ class Items : AppCompatActivity() {
         val ith = ItemTouchHelper(touchHelper)
         ith.attachToRecyclerView(binding.recycler)
     }
+
+    /*
+    So it filters the recyclerView with whatever
+    you type into the searchView, it compares it
+    to the name
+     */
 
     private fun search() {
         scope2.launch {
@@ -199,6 +234,11 @@ class Items : AppCompatActivity() {
         }
     }
 
+    /*
+    Initializing the recycler and setting
+    the adapter to the recycler's
+     */
+
     private fun recycler() {
         binding.recycler.layoutManager = LinearLayoutManager(this)
         binding.recycler.setHasFixedSize(true)
@@ -206,6 +246,11 @@ class Items : AppCompatActivity() {
         adapter = Adapter(list)
         binding.recycler.adapter = adapter
     }
+
+    /*
+    It makes it able to clear the main list and the search one
+    just in case it was getting repeated values
+     */
 
     @SuppressLint("NotifyDataSetChanged")
     private fun clear() {
@@ -216,11 +261,20 @@ class Items : AppCompatActivity() {
         binding.recycler.adapter?.notifyDataSetChanged()
     }
 
+    /*
+    It initializes realtime database
+     */
+
     private fun initDB() {
         db =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = db.getReference("items")
     }
+
+    /*
+    It fills the recyclerView with all
+    of the items in the database
+     */
 
     private fun fillAll() {
         reference =
@@ -244,6 +298,11 @@ class Items : AppCompatActivity() {
             }
         })
     }
+
+    /*
+    It send you to the newItem activity
+    via an intent
+     */
 
     private fun newItem() {
         val i = Intent(this, NewItem::class.java).apply {

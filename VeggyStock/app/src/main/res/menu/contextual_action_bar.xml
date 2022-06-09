@@ -15,4 +15,12 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/sort"
         />
+
+    <item
+        android:id="@+id/maps"
+        android:contentDescription="@string/content_description_maps"
+        android:title="@string/maps"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/maps"
+        />
 </menu>

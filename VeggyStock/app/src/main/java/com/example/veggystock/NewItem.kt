@@ -15,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.airbnb.lottie.model.content.CircleShape
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
@@ -46,7 +47,7 @@ class NewItem : AppCompatActivity() {
     private lateinit var reference: DatabaseReference
     private lateinit var storage: StorageReference
     lateinit var binding: ActivityNewItemBinding
-    private lateinit var imageUri: Uri
+    private var imageUri: Uri = Uri.parse("https://img.icons8.com/ios/344/no-image.png")
     private lateinit var imageBitmap: Bitmap
     private lateinit var data2: ByteArray
     private var urlBaseDatabase = "https://api.edamam.com/api/food-database/v2/"
@@ -349,8 +350,7 @@ class NewItem : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == RESULT_OK) {
             imageUri = data?.data!!
-            //if (binding.switchCamera?.isChecked == true)
-            Picasso.get()!!.load(imageUri).fit().centerCrop().into(binding.imageButton)
+            Picasso.get()!!.load(imageUri).fit().into(binding.imageButton)
         }
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {

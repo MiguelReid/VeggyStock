@@ -1,8 +1,22 @@
 package com.example.veggystock.modelDB
 
 class Body {
+
+    /*
+    The structure that realtime
+    database is going to follow
+     */
+
     constructor()
-    constructor(nm: String, pvd: String, prc: Float, adrs: String, rtng: Float, fav: Boolean, vgn: Boolean) {
+    constructor(
+        nm: String,
+        pvd: String,
+        prc: Float,
+        adrs: String,
+        rtng: Float,
+        fav: Boolean,
+        vgn: Boolean
+    ) {
         name = nm
         provider = pvd
         price = prc

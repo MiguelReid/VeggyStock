@@ -56,4 +56,10 @@
     <string name="item_saved">Item saved</string>
     <string name="signed_in">You signed in!</string>
     <string name="not_signed_in">You didn\'t sign in</string>
+    <string name="content_description_maps">Maps</string>
+    <string name="maps">Maps</string>
+    <string name="restaurants">Search Restaurants</string>
+    <string name="select_option">Select an option!</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>
