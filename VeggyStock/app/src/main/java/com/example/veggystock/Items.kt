@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.databinding.ActivityAllItemsBinding
 import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import kotlinx.coroutines.CoroutineScope
@@ -102,7 +103,7 @@ class Items : AppCompatActivity() {
                     true
                 }
                 R.id.maps -> {
-                    maps()
+                    alertDialog()
                     true
                 }
                 else -> false
@@ -125,8 +126,28 @@ class Items : AppCompatActivity() {
     }
 
     // Opens an activity
-    private fun maps() {
-        startActivity(Intent(this, Maps::class.java))
+
+    private fun alertDialog() {
+        val singleItems = arrayOf("Vegan", "Vegetarian", "Gluten-Free")
+        var checkedItem = 0
+
+        MaterialAlertDialogBuilder(this, R.style.alertDialogInconclusive)
+            .setTitle(resources.getString(R.string.select_option))
+            .setNeutralButton(resources.getString(R.string.cancel)) { _, _ -> }
+            .setPositiveButton(resources.getString(R.string.ok)) { _, which ->
+                googleMaps(singleItems[checkedItem])
+            }
+            .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
+                checkedItem = which
+            }
+            .show()
+    }
+
+    private fun googleMaps(checked: String) {
+        val searchAddress =
+            Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=bar $checked&t=k&hl=esp"))
+        searchAddress.setPackage("com.google.android.apps.maps")
+        startActivity(searchAddress)
     }
 
     /*
