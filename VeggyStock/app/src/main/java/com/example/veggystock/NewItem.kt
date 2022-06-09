@@ -15,7 +15,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.airbnb.lottie.model.content.CircleShape
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
@@ -60,6 +59,7 @@ class NewItem : AppCompatActivity() {
     lateinit var apiCall2Body: Gson2
     lateinit var apiCallBody: Hints
     private var urlBaseUpc = "https://api.edamam.com/api/food-database/v2/"
+    private lateinit var uriStorage: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -356,10 +356,10 @@ class NewItem : AppCompatActivity() {
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
             val items = Items()
-            val file2 = items.bitmapToUri(imageBitmap, cacheDir)
+            imageUri = items.bitmapToUri(imageBitmap, cacheDir)
             if (binding.switchCamera?.isChecked == true) {
                 //binding.imageButton.setImageBitmap(imageBitmap)
-                Picasso.get().load(file2).fit().into(binding.imageButton)
+                Picasso.get().load(uriStorage).fit().into(binding.imageButton)
             } else {
                 scanBarcodes(imageBitmap)
             }
@@ -375,7 +375,7 @@ class NewItem : AppCompatActivity() {
         storage = FirebaseStorage.getInstance().getReference("images/$fileName")
 
         if (binding.switchCamera?.isChecked!!) {
-            storage.putBytes(data2).addOnSuccessListener {
+            storage.putFile(imageUri).addOnSuccessListener {
                 //We have to putBytes because its in ByteArray format, and not Uri like normally
                 binding.imageButton.setImageURI(null)
             }.addOnFailureListener {

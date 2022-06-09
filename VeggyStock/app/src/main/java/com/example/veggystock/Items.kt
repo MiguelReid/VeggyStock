@@ -136,15 +136,6 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * To order the recyclerView by different ways
-     *
-     */
-
-    private fun orderByMenu(option: String) {
-        fillAll(option.lowercase())
-    }
-
-    /**
      * Alert dialog giving options of
      * different restaurants you can eat in
      */
@@ -159,7 +150,7 @@ class Items : AppCompatActivity() {
                 if (tags.first() == "Vegan") {
                     googleMaps(tags[checkedItem])
                 } else if (tags.first() == "Name") {
-                    orderByMenu(tags[checkedItem])
+                    fillAll(tags[checkedItem])
                 }
             }
             .setSingleChoiceItems(tags, checkedItem) { _, which ->
@@ -324,7 +315,7 @@ class Items : AppCompatActivity() {
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("Users").child(email)
-        reference.orderByChild(order).addValueEventListener(object : ValueEventListener {
+        reference.orderByChild(order.lowercase()).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 clear()
                 if (snapshot.exists()) {
