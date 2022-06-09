@@ -81,9 +81,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    /*
-    Listeners to control the action started
-    when you click a button
+    /**
+     * Listeners to control the action started
+     * when you click a button
      */
 
     private fun listener() {
@@ -103,9 +103,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /*
-    It signs you in into the app
-    with the necessary elements
+    /**
+     * It signs you in into the app
+     * with the necessary elements
      */
 
     private fun signIn() {
@@ -120,9 +120,10 @@ class MainActivity : AppCompatActivity() {
         responseLauncher.launch(googleClient.signInIntent)
     }
 
-    /*
-    It starts an activity sending the
-    email (needed for every action in realtime database)
+    /**
+     * It starts an activity sending the
+     * email (needed for every action in realtime database)
+     * @param email
      */
 
     private fun startApp(email: String) {
@@ -133,8 +134,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(i)
     }
 
-    /*
-    It checks if there is another session opened
+    /**
+     * It checks if there is another session opened
      */
 
     private fun checkSession() {

@@ -40,6 +40,8 @@ class Items : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val scope2 = CoroutineScope(Dispatchers.IO)
     private lateinit var data2: ByteArray
+    private val healthTags = arrayOf("Vegan", "Vegetarian", "Gluten-Free")
+    private val orderTags = arrayOf("Name", "Price", "Rating")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAllItemsBinding.inflate(layoutInflater)
@@ -57,10 +59,10 @@ class Items : AppCompatActivity() {
         scope2.launch { getData() }
     }
 
-    /*
-    Hash map I can use to send information to the Adapter class
-    this way I can use the email
-    to modify data in realtime database
+    /**
+     * Hash map I can use to send information to the Adapter class
+     * this way I can use the email to modify data in realtime database
+     * @return
      */
 
     fun getData(): HashMap<String, String> {
@@ -69,9 +71,12 @@ class Items : AppCompatActivity() {
         return map
     }
 
-    /*
-    I need images in Uri format to be able
-    to manipulate them with Picasso
+    /**
+     * Function to convert a Bitmap into Uri
+     * to manipulate them with Picasso
+     * @param imageBitmap
+     * @param cacheDir
+     * @return
      */
 
     fun bitmapToUri(imageBitmap: Bitmap, cacheDir: File): Uri {
@@ -91,11 +96,16 @@ class Items : AppCompatActivity() {
         return file.toUri()
     }
 
+    /**
+     * What to do depending on
+     * the element of the menu pressed
+     */
+
     private fun menu() {
         binding.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.orderBy -> {
-                    orderByMenu()
+                    alertDialog(orderTags)
                     true
                 }
                 R.id.item_new -> {
@@ -103,7 +113,7 @@ class Items : AppCompatActivity() {
                     true
                 }
                 R.id.maps -> {
-                    alertDialog()
+                    alertDialog(healthTags)
                     true
                 }
                 else -> false
@@ -118,41 +128,62 @@ class Items : AppCompatActivity() {
                 newTab: AnimatedBottomBar.Tab
             ) {
                 when (newIndex) {
-                    0 -> scope.launch { fillAll() }
+                    0 -> scope.launch { fillAll("name") }
                     1 -> scope.launch { fillFavourites() }
                 }
             }
         })
     }
 
-    // Opens an activity
+    /**
+     * To order the recyclerView by different ways
+     *
+     */
 
-    private fun alertDialog() {
-        val singleItems = arrayOf("Vegan", "Vegetarian", "Gluten-Free")
+    private fun orderByMenu(option: String) {
+        fillAll(option.lowercase())
+    }
+
+    /**
+     * Alert dialog giving options of
+     * different restaurants you can eat in
+     */
+
+    private fun alertDialog(tags: Array<String>) {
         var checkedItem = 0
 
         MaterialAlertDialogBuilder(this, R.style.alertDialogInconclusive)
             .setTitle(resources.getString(R.string.select_option))
             .setNeutralButton(resources.getString(R.string.cancel)) { _, _ -> }
-            .setPositiveButton(resources.getString(R.string.ok)) { _, which ->
-                googleMaps(singleItems[checkedItem])
+            .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
+                if (tags.first() == "Vegan") {
+                    googleMaps(tags[checkedItem])
+                } else if (tags.first() == "Name") {
+                    orderByMenu(tags[checkedItem])
+                }
             }
-            .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
+            .setSingleChoiceItems(tags, checkedItem) { _, which ->
                 checkedItem = which
             }
             .show()
     }
 
+    /**
+     * It starts an intent with the
+     * selection made in the alert dialog
+     * @param checked
+     */
+
     private fun googleMaps(checked: String) {
         val searchAddress =
-            Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=bar $checked&t=k&hl=esp"))
+            Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=bar $checked&t=k&hl=es-419"))
         searchAddress.setPackage("com.google.android.apps.maps")
         startActivity(searchAddress)
     }
 
-    /*
-    Filling the recyclerView with only items that have
-    the favourite value in realtime database = true
+    /**
+     * Filling the recyclerView with only items that have
+     * the favourite value in realtime database = true
      */
 
     private fun fillFavourites() {
@@ -179,17 +210,9 @@ class Items : AppCompatActivity() {
             })
     }
 
-    /*
-    To order the recyclerView by different ways
-     */
-
-    private fun orderByMenu() {
-
-    }
-
-    /*
-    It makes it possible to delete an item
-    when swiping it to the left
+    /**
+     * It makes it possible to delete an item
+     * when swiping it to the left
      */
 
     private fun swipe() {
@@ -213,10 +236,10 @@ class Items : AppCompatActivity() {
         ith.attachToRecyclerView(binding.recycler)
     }
 
-    /*
-    So it filters the recyclerView with whatever
-    you type into the searchView, it compares it
-    to the name
+    /**
+     * So it filters the recyclerView with whatever
+     * you type into the searchView, it compares it
+     * to the name
      */
 
     private fun search() {
@@ -242,7 +265,7 @@ class Items : AppCompatActivity() {
                             return true
                         } else {
                             arrayList.clear()
-                            fillAll()
+                            fillAll("name")
                             adapter = Adapter(list)
                             binding.recycler.adapter = adapter
                             binding.recycler.adapter?.notifyItemRangeChanged(0, list.size)
@@ -255,22 +278,22 @@ class Items : AppCompatActivity() {
         }
     }
 
-    /*
-    Initializing the recycler and setting
-    the adapter to the recycler's
+    /**
+     * Initializing the recycler and setting
+     * the adapter to the recycler's
      */
 
     private fun recycler() {
         binding.recycler.layoutManager = LinearLayoutManager(this)
         binding.recycler.setHasFixedSize(true)
-        scope.launch { fillAll() }
+        scope.launch { fillAll("name") }
         adapter = Adapter(list)
         binding.recycler.adapter = adapter
     }
 
-    /*
-    It makes it able to clear the main list and the search one
-    just in case it was getting repeated values
+    /**
+     * It makes it able to clear the main list and the search one
+     * just in case it was getting repeated values
      */
 
     @SuppressLint("NotifyDataSetChanged")
@@ -282,8 +305,8 @@ class Items : AppCompatActivity() {
         binding.recycler.adapter?.notifyDataSetChanged()
     }
 
-    /*
-    It initializes realtime database
+    /**
+     * It initializes realtime database
      */
 
     private fun initDB() {
@@ -292,16 +315,16 @@ class Items : AppCompatActivity() {
         reference = db.getReference("items")
     }
 
-    /*
-    It fills the recyclerView with all
-    of the items in the database
+    /**
+     * It fills the recyclerView with all
+     * of the items in the database
      */
 
-    private fun fillAll() {
+    private fun fillAll(order:String) {
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("Users").child(email)
-        reference.addValueEventListener(object : ValueEventListener {
+        reference.orderByChild(order).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 clear()
                 if (snapshot.exists()) {
@@ -320,9 +343,9 @@ class Items : AppCompatActivity() {
         })
     }
 
-    /*
-    It send you to the newItem activity
-    via an intent
+    /**
+     * It send you to the newItem activity
+     * via an intent
      */
 
     private fun newItem() {
