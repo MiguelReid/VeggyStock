@@ -311,27 +311,29 @@ class Items : AppCompatActivity() {
      * of the items in the database
      */
 
-    private fun fillAll(order:String) {
+    private fun fillAll(order: String) {
         reference =
             FirebaseDatabase.getInstance("https://veggystock-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("Users").child(email)
-        reference.orderByChild(order.lowercase()).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                clear()
-                if (snapshot.exists()) {
-                    for (itemSnapshot in snapshot.children) {
-                        val item = itemSnapshot.getValue(Body::class.java)
-                        list.add(item!!)
+        reference.orderByChild(order.lowercase())
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    clear()
+                    if (snapshot.exists()) {
+                        for (itemSnapshot in snapshot.children) {
+                            val item = itemSnapshot.getValue(Body::class.java)
+                            list.add(item!!)
+                        }
+                        //list.reverse()
+                        adapter = Adapter(list)
+                        binding.recycler.adapter = adapter
                     }
-                    adapter = Adapter(list)
-                    binding.recycler.adapter = adapter
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@Items, "Error Filling Recycler", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@Items, "Error Filling Recycler", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     /**

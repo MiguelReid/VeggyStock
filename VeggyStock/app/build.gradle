@@ -38,6 +38,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "org.jetbrains.dokka"
 
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 androidExtensions {
