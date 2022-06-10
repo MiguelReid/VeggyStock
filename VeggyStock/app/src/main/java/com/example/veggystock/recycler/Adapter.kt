@@ -17,7 +17,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -65,18 +68,18 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         // File.createTempFile cannot be executed in a CoroutineScope
 
         scope.launch {
-            supervisorScope {
-                delay(750)
-                storageRef.getFile(localfile).addOnSuccessListener {
-                    val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-                    holder.binding.btnItem.setImageBitmap(bitmap)
-                    val items = Items()
-                    uri = items.bitmapToUri(bitmap, context.cacheDir)
-                    Picasso.get().load(uri).fit().into(holder.binding.btnItem)
-                }.addOnFailureListener {
-                    Log.e("ERROR ->> ", "Failed to retrieve the image")
-                }
+            //supervisorScope {
+            delay(750)
+            storageRef.getFile(localfile).addOnSuccessListener {
+                val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
+                holder.binding.btnItem.setImageBitmap(bitmap)
+                val items = Items()
+                uri = items.bitmapToUri(bitmap, context.cacheDir)
+                Picasso.get().load(uri).fit().into(holder.binding.btnItem)
+            }.addOnFailureListener {
+                Log.e("ERROR ->> ", "Failed to retrieve the image")
             }
+            //}
         }
 
         holder.binding.btnItem.setOnClickListener {
