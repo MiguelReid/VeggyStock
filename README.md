@@ -15,7 +15,7 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 
 | Activity | Ejemplo |
 | ------ | ------ |
-| MainActivity | ![Imagen]([image.jpg](https://drive.google.com/file/d/1dXMB0vevA3dB4lNC8TRoUKxGtUKfZN48/view?usp=sharing.png)) |
+| MainActivity | ![MainActivity](https://github.com/[MiguelReid]/[VeggyStock]/blob/[main]/MainActivity.jpeg?raw=true) |
 | Dropbox | ![Imagen](image.jpg) |
 | Dropbox | ![Imagen](image.jpg) |
 | Dropbox | ![Imagen](image.jpg) |
