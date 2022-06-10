@@ -16,10 +16,11 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 | Activity | Ejemplo |
 | ------ | ------ |
 | MainActivity | ![MainActivity](https://github.com/MiguelReid/VeggyStock/blob/main/Images/MainActivity.jpeg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
-| Dropbox | ![Imagen](image.jpg) |
+| Items | ![Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Items.jpeg) |
+| Favourite Items | ![Favourite Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/FavoriteItems.jpeg) |
+| Vegan | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan.jpeg) |
+| Vegan | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan2.jpeg) |
+| Not Vegan | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Not Vegan.jpeg) |
+| Not Vegan | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) |
+| Maps | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) |
+| Maps | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
