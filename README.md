@@ -13,14 +13,10 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 - Abrir google maps para buscar bares del tipo elegido (vegetariano, vegano, gluten-free)
 - Eliminar recetas
 
-| Activity | Ejemplo |
-| ------ | ------ |
-| MainActivity | ![MainActivity](https://github.com/MiguelReid/VeggyStock/blob/main/Images/MainActivity.jpeg) |
-| Items | ![Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Items.jpeg) |
-| Favourite Items | ![Favourite Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/FavoriteItems.jpeg) |
-| Vegan | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan.jpeg) |
-| Vegan | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan2.jpeg) |
-| Not Vegan | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Not Vegan.jpeg) |
-| Not Vegan | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) |
-| Maps | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) |
-| Maps | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
+| MainActivity | Items | FavouriteItems | Vegan | Vegan |
+| ------ | ------ | ------ | ------ | ------ |
+![MainActivity](https://github.com/MiguelReid/VeggyStock/blob/main/Images/MainActivity.jpeg) | ![Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Items.jpeg) | ![Favourite Items](https://github.com/MiguelReid/VeggyStock/blob/main/Images/FavoriteItems.jpeg) | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan.jpeg) | ![Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Vegan2.jpeg) |
+
+| NotVegan | NotVegan | Maps | Maps |
+| ------ | ------ | ------ | ------ |
+![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan.jpeg) | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
