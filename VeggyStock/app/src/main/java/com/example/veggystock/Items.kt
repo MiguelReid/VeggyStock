@@ -136,8 +136,10 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * Alert dialog giving options of
-     * different restaurants you can eat in
+     * Alert dialog que da opciones de restaurantes
+     * en los que comer o opciones para ordenar el recyclere
+     * dependiendo de que array se le pase
+     * asi uso un solo metodo para 2 funciones
      */
 
     private fun alertDialog(tags: Array<String>) {

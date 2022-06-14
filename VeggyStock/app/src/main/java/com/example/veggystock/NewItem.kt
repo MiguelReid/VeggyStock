@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,6 +16,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
@@ -32,12 +34,11 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 class NewItem : AppCompatActivity() {
 
@@ -46,9 +47,8 @@ class NewItem : AppCompatActivity() {
     private lateinit var reference: DatabaseReference
     private lateinit var storage: StorageReference
     lateinit var binding: ActivityNewItemBinding
-    private var imageUri: Uri = Uri.parse("https://img.icons8.com/ios/344/no-image.png")
+    private lateinit var imageUri: Uri
     private lateinit var imageBitmap: Bitmap
-    private lateinit var data2: ByteArray
     private var urlBaseDatabase = "https://api.edamam.com/api/food-database/v2/"
     private var appIdDatabase = "f92aec81"
     private var appKeyDatabase = "0efe25b2bec1d420f5f78f7deaa3358c"
@@ -59,7 +59,8 @@ class NewItem : AppCompatActivity() {
     lateinit var apiCall2Body: Gson2
     lateinit var apiCallBody: Hints
     private var urlBaseUpc = "https://api.edamam.com/api/food-database/v2/"
-    private lateinit var uriStorage: Uri
+    private var vegan = false
+    val items = Items()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -134,7 +135,7 @@ class NewItem : AppCompatActivity() {
     private fun searchDatabase() {
         val name = binding.inputName?.editText?.text.toString()
         if (name.isNotEmpty()) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(IO).launch {
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
                 //&health=vegetarian
@@ -206,7 +207,6 @@ class NewItem : AppCompatActivity() {
             val price = aux.toFloat()
             val rating = binding.ratingBar.rating
             val address = binding.inputStreet?.editText?.text.toString()
-            var vegan = false
             if (binding.checkVeggy?.isChecked == true) {
                 vegan = true
             }
@@ -287,7 +287,6 @@ class NewItem : AppCompatActivity() {
     private fun scanBarcodes(bitmap: Bitmap) {
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(
-                Barcode.FORMAT_CODABAR,
                 Barcode.FORMAT_UPC_A,
                 Barcode.FORMAT_UPC_E,
                 Barcode.FORMAT_EAN_8,
@@ -303,7 +302,7 @@ class NewItem : AppCompatActivity() {
                     val rawValue = barcode.rawValue.toString()
                     Log.d("RAWVALUE ->>>", rawValue)
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(IO).launch {
                         val apiCall = getRetrofit(urlBaseUpc).create(ApiService::class.java)
                             .foodDatabase("parser?app_id=$appIdDatabase&app_key=$appKeyDatabase&upc=$rawValue")
                         //&health=vegetarian
@@ -323,7 +322,7 @@ class NewItem : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                Log.e("PROBLEM ->>>>>>", "BARCODE NOT RECOGNIZED")
+                Log.e("ERROR ->>", "BARCODE NOT RECOGNIZED")
             }
     }
 
@@ -339,11 +338,27 @@ class NewItem : AppCompatActivity() {
             .show()
     }
 
+    private fun saveImage(url: Uri) {
+        Picasso.get().load(url).into(object : com.squareup.picasso.Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                imageUri = items.bitmapToUri(bitmap!!, cacheDir)
+                Log.d("INFO LOADED BITMAP->>", imageUri.toString())
+            }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+        })
+    }
+
     private fun setData(veggy: Boolean) {
         binding.inputName?.editText?.setText(apiCallBody.listHints.first().food.label)
         Picasso.get().load(apiCallBody.listHints.first().food.image).fit()
             .into(binding.imageButton)
         binding.checkVeggy?.isChecked = veggy
+
+        val stringAux = apiCallBody.listHints.first().food.image.toUri()
+        saveImage(stringAux)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -355,11 +370,9 @@ class NewItem : AppCompatActivity() {
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
-            val items = Items()
-            imageUri = items.bitmapToUri(imageBitmap, cacheDir)
             if (binding.switchCamera?.isChecked == true) {
-                //binding.imageButton.setImageBitmap(imageBitmap)
-                Picasso.get().load(uriStorage).fit().into(binding.imageButton)
+                imageUri = items.bitmapToUri(imageBitmap, cacheDir)
+                Picasso.get().load(imageUri).fit().into(binding.imageButton)
             } else {
                 scanBarcodes(imageBitmap)
             }
@@ -372,22 +385,16 @@ class NewItem : AppCompatActivity() {
         val address = binding.inputStreet?.editText?.text.toString()
         val fileName = "$name $provider $address"
 
+        Log.d("INFO IMAGE URI UPLOAD->>", imageUri.toString())
+
         storage = FirebaseStorage.getInstance().getReference("images/$fileName")
 
-        if (binding.switchCamera?.isChecked!!) {
-            storage.putFile(imageUri).addOnSuccessListener {
-                //We have to putBytes because its in ByteArray format, and not Uri like normally
-                binding.imageButton.setImageURI(null)
-            }.addOnFailureListener {
-                Toast.makeText(this@NewItem, "Image Not Uploaded", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            storage.putFile(imageUri).addOnSuccessListener {
-                binding.imageButton.setImageURI(null)
-            }.addOnFailureListener {
-                Toast.makeText(this@NewItem, "Image Not Uploaded", Toast.LENGTH_SHORT).show()
-            }
+        storage.putFile(imageUri).addOnSuccessListener {
+            binding.imageButton.setImageURI(null)
+        }.addOnFailureListener {
+            Toast.makeText(this@NewItem, "Image Not Uploaded", Toast.LENGTH_SHORT).show()
         }
+
     }
 
     private fun initDB() {

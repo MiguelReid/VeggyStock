@@ -55,11 +55,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    //Firebase authentication, realtime, push notifications
+    //Firebase authentication, realtime, storage
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.5'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.5'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
     //Material Design
@@ -67,7 +66,7 @@ dependencies {
     api 'com.google.android.material:material:1.7.0-alpha02'
 
     //Google maps
-    implementation 'com.google.android.gms:play-services-location:19.0.1'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
 
     //Lotti
     implementation 'com.airbnb.android:lottie:3.4.2'

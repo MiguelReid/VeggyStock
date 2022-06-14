@@ -69,7 +69,7 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
         scope.launch {
             //supervisorScope {
-            delay(750)
+            delay(1000)
             storageRef.getFile(localfile).addOnSuccessListener {
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
                 holder.binding.btnItem.setImageBitmap(bitmap)
@@ -117,11 +117,9 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
         reference.get().addOnSuccessListener {
             if (it.value == true) {
-                Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " VEGAN")
                 holder.binding.imageVeggy?.visibility = View.VISIBLE
             } else {
                 holder.binding.imageVeggy?.visibility = View.INVISIBLE
-                Log.i("INFO ->> ", holder.binding.tvName.text.toString() + " NOT VEGAN")
             }
         }.addOnFailureListener {
             Log.e("ERROR ->> ", "Vegan Icon error getting data", it)
