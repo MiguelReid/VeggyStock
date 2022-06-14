@@ -1,4 +1,4 @@
-package com.example.veggystock
+package com.example.veggystock.NewItem
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import com.example.veggystock.Items.Items
+import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityNewItemBinding
 import com.example.veggystock.foodDatabase.ApiService
 import com.example.veggystock.foodDatabase.Gson2
@@ -74,12 +76,24 @@ class NewItem : AppCompatActivity() {
         check()
     }
 
+    /**
+     * Codigo de boiler plate
+     * que inicializa retrofit
+     * @param urlBase
+     * @return
+     */
+
     private fun getRetrofit(urlBase: String): Retrofit {
         return Retrofit.Builder()
             .baseUrl(urlBase)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    /**
+     * Checkea los campos si estan vacios para
+     * no permitir si no guardar un item
+     */
 
     private fun check() {
         binding.btnSave.isEnabled = false
@@ -117,6 +131,11 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Indica que metodos hay que ejecutar
+     * dependiendo del item en el menu pulsado
+     */
+
     private fun menu() {
         binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -133,30 +152,43 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Busca en la base de datos por el nombre introducido en el campo nombre
+     */
+
     private fun searchDatabase() {
         val name = binding.inputName?.editText?.text.toString()
         if (name.isNotEmpty()) {
             binding.inputName?.isErrorEnabled = false
             CoroutineScope(Dispatchers.Main).launch {
+                // Se ejecuta en la corrutina confinada al hilo principal para que no
+                // de error -> E/AndroidRuntime: FATAL EXCEPTION: DefaultDispatcher-worker-4
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
                 //&health=vegetarian
                 if (apiCall.isSuccessful) {
+                    // Controlamos pasarle el body solo si hay contenido
                     apiCallBody = apiCall.body()!!
                     if (apiCallBody.listHints.isNotEmpty()) {
+                        // Solo si hay un resultado usaremos el foodId para llamar a la segunda API
                         apiCall2 =
                             getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                 .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&nutrition-type=cooking&ingr=${apiCallBody.listHints.first().food.id}")
                         uiThread()
+                        //Controlamos el alertDialog dependiendo de si es vegano o no
                     } else {
                         alertNotFound()
                     }
                 }
             }
-        } else if(name == ""){
+        } else if (name == "") {
             binding.inputName?.error = "A name is required"
         }
     }
+
+    /**
+     * Controla el caso de que el alimento sea o no vegano
+     */
 
     private fun uiThread() {
         runOnUiThread {
@@ -187,6 +219,11 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Metodo para alertDialog si no se encuentra el alimento en la API
+     * Se pone aparte para sintetizar el otro metodo y hacerlo mas legible
+     */
+
     private fun alertNotFound() {
         runOnUiThread {
             MaterialAlertDialogBuilder(
@@ -200,6 +237,12 @@ class NewItem : AppCompatActivity() {
                 .show()
         }
     }
+
+    /**
+     * Coge los datos para subirlos a realtimeDatabase
+     * y me deja elegir foto / abrir camera para subir la imagen
+     * a storage
+     */
 
     private fun listener() {
         binding.btnSave.setOnClickListener {
@@ -221,6 +264,10 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Pide permiso para acceder a la camara
+     */
+
     private fun requestPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             Toast.makeText(this, "You need the camera!", Toast.LENGTH_SHORT).show()
@@ -233,6 +280,14 @@ class NewItem : AppCompatActivity() {
             )
         }
     }
+
+    /**
+     * Si se da permiso a la camara me dejara
+     * echar una foto
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
 
     @SuppressLint("QueryPermissionsNeeded")
     override fun onRequestPermissionsResult(
@@ -254,6 +309,11 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Me abrira un intent del almacenamiento interno
+     * para elegir una imagen a subir a storage
+     */
+
     private fun chooseImage() {
         val intent = Intent()
         intent.type = "image/*"
@@ -263,6 +323,17 @@ class NewItem : AppCompatActivity() {
             100
         )
     }
+
+    /**
+     * Guarda un item en relatimeDatabase y sube la imagen que hayamos
+     * elegido / hecho / obtenido con la API a storage
+     * @param name
+     * @param provider
+     * @param price
+     * @param rating
+     * @param address
+     * @param vegan
+     */
 
     private fun saveItem(
         name: String,
@@ -286,6 +357,12 @@ class NewItem : AppCompatActivity() {
             }
     }
 
+    /**
+     * A partir de la imagen echada con la camara escanea un codigo de barras para
+     * mandar el valor crudo (raw) a la API de Edamam
+     * @param bitmap
+     */
+
     private fun scanBarcodes(bitmap: Bitmap) {
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(
@@ -294,9 +371,11 @@ class NewItem : AppCompatActivity() {
                 Barcode.FORMAT_EAN_8,
                 Barcode.FORMAT_EAN_13
             ).build()
+        // Solo permito estas opciones ya que son las aceptadas en la API Edamam
 
         val scanner = BarcodeScanning.getClient(options)
         val image = InputImage.fromBitmap(bitmap, 0)
+        // Asi puedo usar la imagen echada con la camara que es un bitmap
 
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
@@ -307,14 +386,17 @@ class NewItem : AppCompatActivity() {
                     CoroutineScope(IO).launch {
                         val apiCall = getRetrofit(urlBaseUpc).create(ApiService::class.java)
                             .foodDatabase("parser?app_id=$appIdDatabase&app_key=$appKeyDatabase&upc=$rawValue")
-                        //&health=vegetarian
+                        // Mandamos a la primera api el valor UPC/EAN
                         if (apiCall.isSuccessful) {
+                            // Si es exitoso cogemos el contenido
                             apiCallBody = apiCall.body()!!
                             if (apiCallBody.listHints.isNotEmpty()) {
+                                // Si se ha encontrado el producto (diferente a llamada no exitosa)
+                                // Llamamos a la segunda api
                                 apiCall2 =
                                     getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                         .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&ingr=${apiCallBody.listHints.first().food.id}")
-                                //&nutrition-type=cooking
+                                // Cogemos el valor vegan y respondemos de forma diferente dependiendo a si es o no
                                 uiThread()
                             } else {
                                 alertNotFound()
@@ -328,6 +410,15 @@ class NewItem : AppCompatActivity() {
             }
     }
 
+    /**
+     * Para poder reutilizar codigo usamos el mismo para respuesta vegana y no vegana
+     * Le mandamos el id del estilo (rojo o verde) y si es vegano o no para
+     * indicarlo en el checkBox
+     * @param style
+     * @param message
+     * @param veggy
+     */
+
     private fun alertBuilder(style: Int, message: String, veggy: Boolean) {
         MaterialAlertDialogBuilder(this@NewItem, style)
             .setTitle("Save Item?")
@@ -339,6 +430,13 @@ class NewItem : AppCompatActivity() {
             }
             .show()
     }
+
+    /**
+     * Necesitamos pasar el url a bitmap para escribirlo en un fichero y
+     * pasarlo a uri para ser capaces de subir la imagen a storage, ya que
+     * el sdk no permite subir una url de imagen
+     * @param url
+     */
 
     private fun urlToBitmap(url: Uri) {
         Picasso.get().load(url).into(object : com.squareup.picasso.Target {
@@ -352,6 +450,12 @@ class NewItem : AppCompatActivity() {
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
         })
     }
+
+    /**
+     * Autocompletamos campos gracias a la api y si ese item no tiene
+     * imagen asignamos un valor de imagen negra para subir a storage
+     * @param veggy
+     */
 
     private fun setData(veggy: Boolean) {
         binding.inputName?.editText?.setText(apiCallBody.listHints.first().food.label)
@@ -368,6 +472,15 @@ class NewItem : AppCompatActivity() {
             urlToBitmap(imageUriRaw.toUri())
         }
     }
+
+    /**
+     * Si se aceptan los permisos
+     * Dos codigos uno para echar una foto / escanear
+     * y otro para coger la data del almacenamiento interno
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -387,6 +500,11 @@ class NewItem : AppCompatActivity() {
         }
     }
 
+    /**
+     * Subimos la imagen a storage con el mismo nombre que el
+     * nodo de realtime database
+     */
+
     private fun uploadImage() {
         val name = binding.inputName?.editText?.text.toString()
         val provider = binding.inputProvider?.editText?.text.toString()
@@ -402,6 +520,7 @@ class NewItem : AppCompatActivity() {
         }
 
     }
+
     /*
     fun sendData(): HashMap<String, String> {
         val map = HashMap<String, String>()
@@ -409,6 +528,10 @@ class NewItem : AppCompatActivity() {
         Log.i("INFO FILENAME ->>", fileName)
         return map
     }
+     */
+
+    /**
+     * Inicializamos la base de datos
      */
 
     private fun initDB() {

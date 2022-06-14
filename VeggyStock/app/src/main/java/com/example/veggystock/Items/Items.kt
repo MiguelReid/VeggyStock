@@ -1,4 +1,4 @@
-package com.example.veggystock
+package com.example.veggystock.Items
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -12,6 +12,8 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.veggystock.NewItem.NewItem
+import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityAllItemsBinding
 import com.example.veggystock.modelDB.Body
 import com.example.veggystock.recycler.Adapter
@@ -60,8 +62,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * Hash map I can use to send information to the Adapter class
-     * this way I can use the email to modify data in realtime database
+     * Hash map que uso para mandar informacion al adapter
+     * asi puedo conseguir el email para acceder a realtime database
      * @return
      */
 
@@ -72,8 +74,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * Function to convert a Bitmap into Uri
-     * to manipulate them with Picasso
+     * Funcion para convertir una imagen de bitmap a Uri
+     * para asi manipularla con Picasso
      * @param imageBitmap
      * @param cacheDir
      * @return
@@ -84,9 +86,9 @@ class Items : AppCompatActivity() {
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         data2 = baos.toByteArray()
         val file = File(cacheDir, imageBitmap.toString())
-        // When calling it with imageBitmap.toString() each item has its image (before the same one repeated)
+        // Al llamarlo con imageBitmap.toString() cada item tiene su propia imagen en vez de repetirse
         file.delete()
-        // Just in case there is another File
+        // Por si acaso hay algun otro fichero
         file.createNewFile()
         val fileOS = FileOutputStream(file)
         fileOS.write(data2)
@@ -97,8 +99,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * What to do depending on
-     * the element of the menu pressed
+     * Llama a diferentes metodos dependiendo del item que
+     * hayamos pulsado en el menu
      */
 
     private fun menu() {
@@ -162,8 +164,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It starts an intent with the
-     * selection made in the alert dialog
+     * Empieza un intent de google maps con
+     * la eleccion marcada en el alert dialog
      * @param checked
      */
 
@@ -175,8 +177,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * Filling the recyclerView with only items that have
-     * the favourite value in realtime database = true
+     * Rellena el recycler view con los items que en realtime
+     * database tengan el valor favourite a true
      */
 
     private fun fillFavourites() {
@@ -204,8 +206,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It makes it possible to delete an item
-     * when swiping it to the left
+     * hace posible que se pueda eliminar
+     * un item al deslizar a la izquierda
      */
 
     private fun swipe() {
@@ -230,9 +232,10 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * So it filters the recyclerView with whatever
-     * you type into the searchView, it compares it
-     * to the name
+     * Filtra el recyclerView por el nombre con
+     * lo que introduzcas en el searchView, al estar
+     * tendro de un listener se actualiza cuando cambias
+     * letra por letra
      */
 
     private fun search() {
@@ -272,8 +275,7 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * Initializing the recycler and setting
-     * the adapter to the recycler's
+     * Inicializa el recycler con su adapter
      */
 
     private fun recycler() {
@@ -285,8 +287,8 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It makes it able to clear the main list and the search one
-     * just in case it was getting repeated values
+     * Vacia la lista principal y la auxiliar para la busqueda
+     * Por si acaso se repiten valores
      */
 
     @SuppressLint("NotifyDataSetChanged")
@@ -299,7 +301,7 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It initializes realtime database
+     * Inicializa la realtime database
      */
 
     private fun initDB() {
@@ -309,8 +311,10 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It fills the recyclerView with all
-     * of the items in the database
+     * Rellena el recyclerView con todos los items
+     * que se encuentra en realtimeDatabase
+     * Por default se ordena por el nombre
+     * @param order
      */
 
     private fun fillAll(order: String) {
@@ -339,8 +343,7 @@ class Items : AppCompatActivity() {
     }
 
     /**
-     * It send you to the newItem activity
-     * via an intent
+     * Te manda a un nuevo activity con un intent
      */
 
     private fun newItem() {

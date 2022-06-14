@@ -2,9 +2,9 @@ package com.example.veggystock.modelDB
 
 class Body {
 
-    /*
-    The structure that realtime
-    database is going to follow
+    /**
+     * La estructura que realtime database
+     * va a seguir
      */
 
     constructor()

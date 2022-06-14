@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.example.veggystock.MainActivity
+import com.example.veggystock.MainActivity.MainActivity
 import com.example.veggystock.R
 
 @SuppressLint("CustomSplashScreen")

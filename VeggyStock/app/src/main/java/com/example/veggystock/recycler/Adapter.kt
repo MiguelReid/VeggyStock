@@ -9,8 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.veggystock.Items
-import com.example.veggystock.NewItem
+import com.example.veggystock.Items.Items
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
@@ -20,7 +19,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -76,24 +75,24 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         // File.createTempFile cannot be executed in a CoroutineScope
 
         scope.launch {
-            //supervisorScope {
             /*
             if (fileName.equals(imageName)) {
                 delay(1500)
                 Log.d("INFO NEW ITEM ->>", holder.binding.tvName.text.toString())
             }
-
              */
-            storageRef.getFile(localfile).addOnSuccessListener {
-                val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-                //holder.binding.btnItem.setImageBitmap(bitmap)
-                val items = Items()
-                uri = items.bitmapToUri(bitmap, context.cacheDir)
-                Picasso.get().load(uri).fit().into(holder.binding.btnItem)
-            }.addOnFailureListener {
-                Log.e("ERROR ->> ", "Failed to retrieve the image")
+            val defered = async {
+                storageRef.getFile(localfile).addOnSuccessListener {
+                    val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
+                    //holder.binding.btnItem.setImageBitmap(bitmap)
+                    val items = Items()
+                    uri = items.bitmapToUri(bitmap, context.cacheDir)
+                    Picasso.get().load(uri).fit().into(holder.binding.btnItem)
+                }.addOnFailureListener {
+                    Log.e("ERROR ->> ", "Failed to retrieve the image")
+                }
             }
-            //}
+            defered.await()
         }
 
         holder.binding.btnItem.setOnClickListener {

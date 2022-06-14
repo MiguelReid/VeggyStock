@@ -6,7 +6,7 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".Items">
+    tools:context=".Items.Items">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout"
@@ -97,7 +97,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_weight="1"
             app:lottie_enableMergePathsForKitKatAndAbove="true"
-            tools:srcCompat="@drawable/heartfalse" />
+            tools:srcCompat="@drawable/heartfalse"/>
+
+        <!-- app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/heartlottie"-->
 
         <ImageView
             android:id="@+id/image_veggy"

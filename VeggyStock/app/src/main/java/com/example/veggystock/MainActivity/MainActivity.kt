@@ -1,4 +1,4 @@
-package com.example.veggystock
+package com.example.veggystock.MainActivity
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.veggystock.Items.Items
+import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -30,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnStack.setImageResource(R.drawable.stack)
     }
 
-    /*
-    Boiler plate code to signIn with
-    firebase authenticator
+    /**
+     * Codigo de boiler plate para iniciar
+     * sesion con firebase authenticator
      */
 
     private val responseLauncher =
@@ -82,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     /**
-     * Listeners to control the action started
-     * when you click a button
+     * Listeners para controlar la accion
+     * a realizar cuando pulsamos cada boton
      */
 
     private fun listener() {
@@ -104,8 +106,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * It signs you in into the app
-     * with the necessary elements
+     * The deja loggearte en la aplicacion
+     * con los elementos necesarios
      */
 
     private fun signIn() {
@@ -121,8 +123,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * It starts an activity sending the
-     * email (needed for every action in realtime database)
+     * Empieza un activity mandando el email
+     * que se necesita para toda accion con
+     * realtime database
      * @param email
      */
 
@@ -135,7 +138,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * It checks if there is another session opened
+     * Comprueba si los valores estan bien introducidos
      */
 
     private fun checkSession() {

@@ -33,13 +33,13 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Items"
+            android:name=".Items.Items"
             android:exported="false" />
         <activity
-            android:name=".NewItem"
+            android:name=".NewItem.NewItem"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity.MainActivity"
             android:exported="false" />
         <activity
             android:name=".splashscreen.SplashScreen"

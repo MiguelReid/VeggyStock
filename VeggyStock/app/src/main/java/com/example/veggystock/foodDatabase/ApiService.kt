@@ -5,8 +5,8 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 /**
- * First function is where I get the foodId that I will be needing for the second function,
- * where the health tags (like vegan) are available
+ * La primera funcion es de donde cojo el foodId que necesito para la segunda funcion
+ * donde los tags de salud como el de vegano esta disponible
  */
 
 interface ApiService {
