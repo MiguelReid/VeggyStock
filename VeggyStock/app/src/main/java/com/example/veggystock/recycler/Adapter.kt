@@ -52,10 +52,12 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         val map = activity.getData()
         val email = map["EMAIL"]
 
+        /*
         val newitem = NewItem()
         val map2 = newitem.sendData()
         val fileName = map2["FILENAME"]
         Log.i("INFO FILENAME ADAPTER ->>", fileName.toString())
+         */
 
         val element = list[position]
         holder.binding.tvName.text = element.name
@@ -75,10 +77,13 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
         scope.launch {
             //supervisorScope {
+            /*
             if (fileName.equals(imageName)) {
                 delay(1500)
                 Log.d("INFO NEW ITEM ->>", holder.binding.tvName.text.toString())
             }
+
+             */
             storageRef.getFile(localfile).addOnSuccessListener {
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
                 //holder.binding.btnItem.setImageBitmap(bitmap)

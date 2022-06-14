@@ -136,6 +136,7 @@ class NewItem : AppCompatActivity() {
     private fun searchDatabase() {
         val name = binding.inputName?.editText?.text.toString()
         if (name.isNotEmpty()) {
+            binding.inputName?.isErrorEnabled = false
             CoroutineScope(Dispatchers.Main).launch {
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
@@ -152,7 +153,7 @@ class NewItem : AppCompatActivity() {
                     }
                 }
             }
-        } else {
+        } else if(name == ""){
             binding.inputName?.error = "A name is required"
         }
     }
@@ -390,7 +391,7 @@ class NewItem : AppCompatActivity() {
         val name = binding.inputName?.editText?.text.toString()
         val provider = binding.inputProvider?.editText?.text.toString()
         val address = binding.inputStreet?.editText?.text.toString()
-        var fileName = "$name $provider $address"
+        val fileName = "$name $provider $address"
         //Log.d("INFO IMAGE URI UPLOAD->>", imageUri.toString())
         storage = FirebaseStorage.getInstance().getReference("images/$fileName")
 
