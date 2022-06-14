@@ -71,6 +71,7 @@ class Items : AppCompatActivity() {
         return map
     }
 
+
     /**
      * Function to convert a Bitmap into Uri
      * to manipulate them with Picasso

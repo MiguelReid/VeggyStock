@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veggystock.Items
+import com.example.veggystock.NewItem
 import com.example.veggystock.R
 import com.example.veggystock.databinding.ActivityItemBinding
 import com.example.veggystock.modelDB.Body
@@ -51,6 +52,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         val map = activity.getData()
         val email = map["EMAIL"]
 
+        val newitem = NewItem()
+        val map2 = newitem.sendData()
+        val fileName = map2["FILENAME"]
+        Log.i("INFO FILENAME ADAPTER ->>", fileName.toString())
+
         val element = list[position]
         holder.binding.tvName.text = element.name
         holder.binding.tvProvider.text = element.provider
@@ -69,10 +75,13 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
 
         scope.launch {
             //supervisorScope {
-            delay(1000)
+            if (fileName.equals(imageName)) {
+                delay(1500)
+                Log.d("INFO NEW ITEM ->>", holder.binding.tvName.text.toString())
+            }
             storageRef.getFile(localfile).addOnSuccessListener {
                 val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
-                holder.binding.btnItem.setImageBitmap(bitmap)
+                //holder.binding.btnItem.setImageBitmap(bitmap)
                 val items = Items()
                 uri = items.bitmapToUri(bitmap, context.cacheDir)
                 Picasso.get().load(uri).fit().into(holder.binding.btnItem)

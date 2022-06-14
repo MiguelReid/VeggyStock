@@ -25,8 +25,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
-        android:layout_width="409dp"
-        android:layout_height="557dp"
+        android:layout_width="410dp"
+        android:layout_height="575dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="110dp"
         android:background="@color/background_blue"
@@ -45,8 +45,8 @@
 
     <nl.joery.animatedbottombar.AnimatedBottomBar
         android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="417dp"
+        android:layout_height="46dp"
         app:abb_indicatorAppearance="round"
         app:abb_indicatorColor="@color/main_blue"
         app:abb_indicatorLocation="bottom"

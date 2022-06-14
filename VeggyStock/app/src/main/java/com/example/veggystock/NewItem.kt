@@ -34,6 +34,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -135,7 +136,7 @@ class NewItem : AppCompatActivity() {
     private fun searchDatabase() {
         val name = binding.inputName?.editText?.text.toString()
         if (name.isNotEmpty()) {
-            CoroutineScope(IO).launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 val apiCall = getRetrofit(urlBaseDatabase).create(ApiService::class.java)
                     .foodDatabase("parser?session=40&app_id=$appIdDatabase&app_key=$appKeyDatabase&ingr=$name&nutrition-type=cooking")
                 //&health=vegetarian
@@ -338,7 +339,7 @@ class NewItem : AppCompatActivity() {
             .show()
     }
 
-    private fun saveImage(url: Uri) {
+    private fun urlToBitmap(url: Uri) {
         Picasso.get().load(url).into(object : com.squareup.picasso.Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 imageUri = items.bitmapToUri(bitmap!!, cacheDir)
@@ -357,8 +358,14 @@ class NewItem : AppCompatActivity() {
             .into(binding.imageButton)
         binding.checkVeggy?.isChecked = veggy
 
-        val stringAux = apiCallBody.listHints.first().food.image.toUri()
-        saveImage(stringAux)
+        val imageUriAux = apiCallBody.listHints.first().food?.image
+        if (!imageUriAux.isNullOrBlank()) {
+            val imageUriRaw = imageUriAux?.toUri()
+            urlToBitmap(imageUriRaw!!)
+        } else {
+            val imageUriRaw = "https://img.icons8.com/ios-filled/344/no-image.png"
+            urlToBitmap(imageUriRaw.toUri())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -383,10 +390,8 @@ class NewItem : AppCompatActivity() {
         val name = binding.inputName?.editText?.text.toString()
         val provider = binding.inputProvider?.editText?.text.toString()
         val address = binding.inputStreet?.editText?.text.toString()
-        val fileName = "$name $provider $address"
-
-        Log.d("INFO IMAGE URI UPLOAD->>", imageUri.toString())
-
+        var fileName = "$name $provider $address"
+        //Log.d("INFO IMAGE URI UPLOAD->>", imageUri.toString())
         storage = FirebaseStorage.getInstance().getReference("images/$fileName")
 
         storage.putFile(imageUri).addOnSuccessListener {
@@ -396,6 +401,14 @@ class NewItem : AppCompatActivity() {
         }
 
     }
+    /*
+    fun sendData(): HashMap<String, String> {
+        val map = HashMap<String, String>()
+        map["FILENAME"] = fileName
+        Log.i("INFO FILENAME ->>", fileName)
+        return map
+    }
+     */
 
     private fun initDB() {
         val intent = intent
