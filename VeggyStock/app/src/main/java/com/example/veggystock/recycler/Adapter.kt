@@ -30,7 +30,20 @@ var favourite = false
 val scope = CoroutineScope(Dispatchers.IO)
 private lateinit var uri: Uri
 
+/**
+ * La clase adapter es dede donde controlare cada
+ * funcion especifica a un item dependiendo siempre
+ * de la posicion
+ * @property list
+ */
+
 class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapter.DataHolder>() {
+
+    /**
+     * Cogemos el binding
+     * @constructor
+     * @param v
+     */
 
     class DataHolder(v: View) : RecyclerView.ViewHolder(v) {
         val binding = ActivityItemBinding.bind(v)
@@ -45,11 +58,21 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         return DataHolder(v)
     }
 
+    /**
+     * Desde aqui cogemos toda la informacion de cada item y su imagen
+     * Abrimos el intent de google maps para la ubicacion
+     * Manejamos el valor favorito con realtime database y
+     * vemos si es vegano o no para hacer visible el pequeño icon
+     * @param holder
+     * @param position
+     */
+
     override fun onBindViewHolder(holder: DataHolder, position: Int) {
         initDB()
         val activity: Items = holder.itemView.context as Items
         val map = activity.getData()
         val email = map["EMAIL"]
+        // Con este HashMap podemos coger informacion desde otro activity
 
         /*
         val newitem = NewItem()
@@ -72,7 +95,8 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         val imageName = "$name $provider $address"
         val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
         val localfile = File.createTempFile("tempImage", "jpg")
-        // File.createTempFile cannot be executed in a CoroutineScope
+        // File.createTempFile se pone fuera ya que no puede estar dentro
+        // de un corrutine scope
 
         scope.launch {
             /*
@@ -93,6 +117,8 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 }
             }
             defered.await()
+            // Usando async y await nos aseguramos de que se espere a que ejecute
+            // El subir la imagen
         }
 
         holder.binding.btnItem.setOnClickListener {
@@ -100,6 +126,7 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${element.address}"))
             context.startActivity(searchAddress)
         }
+        // Abrimos el intent de google maps con la direccion establecida
 
         holder.binding.imgHeart?.setOnClickListener {
             reference =
@@ -139,9 +166,21 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         }
     }
 
+    /**
+     * Count de los elementos en la lista
+     * @return
+     */
+
     override fun getItemCount(): Int {
         return list.count()
     }
+
+    /**
+     * Eliminamos el child de realtime database y
+     * la imagen con el mismo nombre
+     * @param position
+     * @param email
+     */
 
     fun removeAt(position: Int, email: String) {
         val element = list[position]
@@ -169,6 +208,11 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
         notifyItemRemoved(position)
     }
 
+    /**
+     * Se elimina la imagen de storage
+     * @param imageName
+     */
+
     private fun deleteImage(imageName: String) {
         val storageRef = FirebaseStorage.getInstance().reference.child("images/$imageName")
         storageRef.delete()
@@ -178,6 +222,10 @@ class Adapter(private val list: MutableList<Body>) : RecyclerView.Adapter<Adapte
                 Log.e("ERROR ->> ", " image not deleted from Storage")
             }
     }
+
+    /**
+     * Inicializamos la base de datos
+     */
 
     private fun initDB() {
         db =
