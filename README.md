@@ -27,5 +27,5 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 3. Iniciar sesion
 4. Escoger el repositorio de debajo
 ```sh
-https://github.com/MiguelReid/VeggyStock.git
+https://github.com/MiguelReid/VeggyStock
 ```
