@@ -20,3 +20,12 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 | NotVegan | NotVegan | Maps | Maps |
 | ------ | ------ | ------ | ------ |
 ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan.jpeg) | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
+
+## Instalacion
+1. Instalar Android Studio
+2. Ir a File -> New -> From version control -> GitHub
+3. Iniciar sesion
+4. Escoger el repositorio de debajo
+```sh
+https://github.com/MiguelReid/VeggyStock.git
+```
