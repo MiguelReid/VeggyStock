@@ -34,22 +34,27 @@ android {
         viewBinding = true
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: "org.jetbrains.dokka"
-
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
+apply plugin:"org.jetbrains.dokka"
+
+
 androidExtensions {
     experimental = true
 }
 
 dependencies {
 
+    // Dokka
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.21")
+
     //coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
