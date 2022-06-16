@@ -22,10 +22,11 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan.jpeg) | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
 
 ## Instalacion
-1. Instalar Android Studio
-2. Ir a File -> New -> From version control -> GitHub
-3. Iniciar sesion
-4. Escoger el repositorio de debajo
+1. En seguridad de tu dispositivo habilita instalar aplicaciones de origenes desconocidos 
+2. Entrar en el repositorio de GitHub
 ```sh
 https://github.com/MiguelReid/VeggyStock
 ```
+3. Entra en VeggyStock -> app -> release -> VeggyStock.apk
+4. Descargamos
+5. Abrimos
