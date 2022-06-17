@@ -27,6 +27,6 @@ Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones mul
 ```sh
 https://github.com/MiguelReid/VeggyStock
 ```
-3. Entra en VeggyStock -> app -> release -> VeggyStock.apk
+3. Entra en VeggyStock -> app -> build -> outputs -> apk -> debug -> app-debug.apk
 4. Descargamos
 5. Abrimos
