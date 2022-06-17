@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_blue"
+    tools:context=".Items.Items">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:menu="@menu/contextual_action_bar"
+            app:title="@string/page_title" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="802dp"
+        android:layout_height="1052dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="110dp"
+        android:background="@color/background_blue"
+        android:backgroundTint="@color/background_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SearchView
+        android:id="@+id/search"
+        android:layout_width="802dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="56dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <nl.joery.animatedbottombar.AnimatedBottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="790dp"
+        android:layout_height="115dp"
+        app:abb_indicatorAppearance="round"
+        app:abb_indicatorColor="@color/main_blue"
+        app:abb_indicatorLocation="bottom"
+        app:abb_selectedIndex="0"
+        app:abb_selectedTabType="text"
+        app:abb_tabColor="@color/main_blue"
+        app:abb_tabColorSelected="@color/main_blue"
+        app:abb_tabs="@menu/bottom_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

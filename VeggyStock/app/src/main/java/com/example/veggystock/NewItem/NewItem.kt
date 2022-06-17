@@ -383,26 +383,20 @@ class NewItem : AppCompatActivity() {
                     Log.d("RAWVALUE ->>>", rawValue)
 
                     CoroutineScope(Dispatchers.Main).launch {
-                        Log.d("TRAZA 12", "TEST")
                         val apiCall = getRetrofit(urlBaseUpc).create(ApiService::class.java)
                             .foodDatabase("parser?app_id=$appIdDatabase&app_key=$appKeyDatabase&upc=$rawValue")
                         // Mandamos a la primera api el valor UPC/EAN
                         if (apiCall.isSuccessful) {
-                            Log.d("TRAZA 1", "TEST")
                             // Si es exitoso cogemos el contenido
                             apiCallBody = apiCall.body()!!
-                            Log.d("TRAZA 2", "TEST")
                             if (apiCallBody.listHints.isNotEmpty()) {
-                                Log.d("TRAZA 3", "TEST")
                                 // Si se ha encontrado el producto (diferente a llamada no exitosa)
                                 // Llamamos a la segunda api
                                 apiCall2 =
                                     getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                         .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&ingr=${apiCallBody.listHints.first().food.id}")
                                 // Cogemos el valor vegan y respondemos de forma diferente dependiendo a si es o no
-                                Log.d("TRAZA 4", "TEST")
                                 uiThread()
-                                Log.d("TRAZA 5", "TEST")
                             } else {
                                 alertNotFound()
                             }
