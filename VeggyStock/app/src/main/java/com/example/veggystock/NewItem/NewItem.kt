@@ -98,19 +98,19 @@ class NewItem : AppCompatActivity() {
     private fun check() {
         binding.btnSave.isEnabled = false
         val editTexts = listOf(
-            binding.inputName?.editText,
-            binding.inputProvider?.editText,
-            binding.inputPrice?.editText,
-            binding.inputStreet?.editText
+            binding.inputName.editText,
+            binding.inputProvider.editText,
+            binding.inputPrice.editText,
+            binding.inputStreet.editText
         )
         for (editText in editTexts) {
 
             editText?.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    val et1 = binding.inputName?.editText?.text.toString().trim()
-                    val et2 = binding.inputProvider?.editText?.text.toString().trim()
-                    val et3 = binding.inputPrice?.editText?.text.toString().trim()
-                    val et4 = binding.inputStreet?.editText?.text.toString().trim()
+                    val et1 = binding.inputName.editText?.text.toString().trim()
+                    val et2 = binding.inputProvider.editText?.text.toString().trim()
+                    val et3 = binding.inputPrice.editText?.text.toString().trim()
+                    val et4 = binding.inputStreet.editText?.text.toString().trim()
 
                     binding.btnSave.isEnabled = et1.isNotEmpty()
                             && et2.isNotEmpty()
@@ -137,7 +137,7 @@ class NewItem : AppCompatActivity() {
      */
 
     private fun menu() {
-        binding.topBarNewItem?.setOnMenuItemClickListener { menuItem ->
+        binding.topBarNewItem.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.scan_item -> {
                     requestPermission()
@@ -157,9 +157,9 @@ class NewItem : AppCompatActivity() {
      */
 
     private fun searchDatabase() {
-        val name = binding.inputName?.editText?.text.toString()
+        val name = binding.inputName.editText?.text.toString()
         if (name.isNotEmpty()) {
-            binding.inputName?.isErrorEnabled = false
+            binding.inputName.isErrorEnabled = false
             CoroutineScope(Dispatchers.Main).launch {
                 // Se ejecuta en la corrutina confinada al hilo principal para que no
                 // de error -> E/AndroidRuntime: FATAL EXCEPTION: DefaultDispatcher-worker-4
@@ -246,20 +246,20 @@ class NewItem : AppCompatActivity() {
 
     private fun listener() {
         binding.btnSave.setOnClickListener {
-            val name = binding.inputName?.editText?.text.toString()
-            val provider = binding.inputProvider?.editText?.text.toString()
-            val aux = binding.inputPrice?.editText?.text.toString()
+            val name = binding.inputName.editText?.text.toString()
+            val provider = binding.inputProvider.editText?.text.toString()
+            val aux = binding.inputPrice.editText?.text.toString()
             val price = aux.toFloat()
             val rating = binding.ratingBar.rating
-            val address = binding.inputStreet?.editText?.text.toString()
-            if (binding.checkVeggy?.isChecked == true) {
+            val address = binding.inputStreet.editText?.text.toString()
+            if (binding.checkVeggy.isChecked) {
                 vegan = true
             }
             saveItem(name, provider, price, rating, address, vegan)
             onBackPressed()
         }
         binding.imageButton.setOnClickListener {
-            if (binding.switchCamera!!.isChecked) requestPermission()
+            if (binding.switchCamera.isChecked) requestPermission()
             else chooseImage()
         }
     }
@@ -372,7 +372,6 @@ class NewItem : AppCompatActivity() {
                 Barcode.FORMAT_EAN_13
             ).build()
         // Solo permito estas opciones ya que son las aceptadas en la API Edamam
-
         val scanner = BarcodeScanning.getClient(options)
         val image = InputImage.fromBitmap(bitmap, 0)
         // Asi puedo usar la imagen echada con la camara que es un bitmap
@@ -383,24 +382,32 @@ class NewItem : AppCompatActivity() {
                     val rawValue = barcode.rawValue.toString()
                     Log.d("RAWVALUE ->>>", rawValue)
 
-                    CoroutineScope(IO).launch {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Log.d("TRAZA 12", "TEST")
                         val apiCall = getRetrofit(urlBaseUpc).create(ApiService::class.java)
                             .foodDatabase("parser?app_id=$appIdDatabase&app_key=$appKeyDatabase&upc=$rawValue")
                         // Mandamos a la primera api el valor UPC/EAN
                         if (apiCall.isSuccessful) {
+                            Log.d("TRAZA 1", "TEST")
                             // Si es exitoso cogemos el contenido
                             apiCallBody = apiCall.body()!!
+                            Log.d("TRAZA 2", "TEST")
                             if (apiCallBody.listHints.isNotEmpty()) {
+                                Log.d("TRAZA 3", "TEST")
                                 // Si se ha encontrado el producto (diferente a llamada no exitosa)
                                 // Llamamos a la segunda api
                                 apiCall2 =
                                     getRetrofit(urlBaseNutrition).create(ApiService::class.java)
                                         .foodAnalysis("nutrition-data?app_id=$appIdNutrition&app_key=$appKeyNutrition&ingr=${apiCallBody.listHints.first().food.id}")
                                 // Cogemos el valor vegan y respondemos de forma diferente dependiendo a si es o no
+                                Log.d("TRAZA 4", "TEST")
                                 uiThread()
+                                Log.d("TRAZA 5", "TEST")
                             } else {
                                 alertNotFound()
                             }
+                        }else{
+                            Log.e("API CALL NOT SUCCESFULL","ERROR")
                         }
                     }
                 }
@@ -491,7 +498,7 @@ class NewItem : AppCompatActivity() {
 
         if (requestCode == cameraCode && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
-            if (binding.switchCamera?.isChecked == true) {
+            if (binding.switchCamera.isChecked == true) {
                 imageUri = items.bitmapToUri(imageBitmap, cacheDir)
                 Picasso.get().load(imageUri).fit().into(binding.imageButton)
             } else {
@@ -506,9 +513,9 @@ class NewItem : AppCompatActivity() {
      */
 
     private fun uploadImage() {
-        val name = binding.inputName?.editText?.text.toString()
-        val provider = binding.inputProvider?.editText?.text.toString()
-        val address = binding.inputStreet?.editText?.text.toString()
+        val name = binding.inputName.editText?.text.toString()
+        val provider = binding.inputProvider.editText?.text.toString()
+        val address = binding.inputStreet.editText?.text.toString()
         val fileName = "$name $provider $address"
         //Log.d("INFO IMAGE URI UPLOAD->>", imageUri.toString())
         storage = FirebaseStorage.getInstance().getReference("images/$fileName")
