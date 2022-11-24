@@ -1,7 +1,5 @@
 # VeggyStock
 Aplicacion que te permitira llevar un listado de alimentos que quieras guardar pudiendo saber cuales son veganos gracias a la API de Edamam
-### Acerca del proyecto
-Este es mi proyecto final de mi grado superior de desarrollo de aplicaciones multiplataforma en el I.E.S Al-Andalus
 ### Funciones
 - Botones en main activity con links a github y stackoverflow
 - Añadir nuevos alimentos
