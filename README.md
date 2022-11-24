@@ -18,13 +18,3 @@ Aplicacion que te permitira llevar un listado de alimentos que quieras guardar p
 | NotVegan | NotVegan | Maps | Maps |
 | ------ | ------ | ------ | ------ |
 ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan.jpeg) | ![Not Vegan](https://github.com/MiguelReid/VeggyStock/blob/main/Images/NotVegan2.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps.jpeg) | ![Maps](https://github.com/MiguelReid/VeggyStock/blob/main/Images/Maps2.jpeg) |
-
-## Instalacion
-1. En seguridad de tu dispositivo habilita instalar aplicaciones de origenes desconocidos 
-2. Entrar en el repositorio de GitHub
-```sh
-https://github.com/MiguelReid/VeggyStock
-```
-3. Entra en VeggyStock -> app -> build -> outputs -> apk -> debug -> app-debug.apk
-4. Descargamos
-5. Abrimos
