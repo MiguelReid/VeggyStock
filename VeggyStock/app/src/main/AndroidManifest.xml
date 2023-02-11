@@ -19,6 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VeggyStock">
         <activity
+            android:name=".MainActivityCompose"
+            android:exported="false"
+            android:label="@string/title_activity_main_compose"
+            android:theme="@style/Theme.VeggyStock" />
+        <activity
             android:name=".Maps"
             android:exported="false" />
 

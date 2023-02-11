@@ -83,11 +83,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    /**
-     * Listeners para controlar la accion
-     * a realizar cuando pulsamos cada boton
-     */
-
     private fun listener() {
         binding.btnLogin.setOnClickListener {
             signIn()
@@ -104,6 +99,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
     }
+    
 
     /**
      * The deja loggearte en la aplicacion
